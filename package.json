@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bvandercar-vt/TODO"
+    "url": "git+https://github.com/bvandrc/TODO"
   },
   "keywords": [
     "MapMyRide"
@@ -29,7 +29,7 @@
   "author": "Blake Vandercar",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/bvandercar-vt/TODO/issues"
+    "url": "https://github.com/bvandrc/TODO/issues"
   },
   "dependencies": {
     "classnames": "^2",

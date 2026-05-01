@@ -5,7 +5,7 @@
 - Google Maps for map layers
 - MapMyRide for ride tracking
 
-**⭐ URL: https://bvandercar-vt.github.io/bike-ride-mapper/ 🔗⭐**
+**⭐ URL: https://bvandrc.github.io/bike-ride-mapper/ 🔗⭐**
 
 ![screenshot default view](readme_images/screenshot-default-view.png 'Default View')
 
