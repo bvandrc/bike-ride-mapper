@@ -11,7 +11,7 @@ import {
 const BASE_LIGHTHOUSE_PORT = 9222
 
 const BASE_THRESHOLDS = {
-  performance: 60, // throttled mobile runs score ~80 locally; headroom for slower CI runners
+  performance: 80, // TODO: improve
   accessibility: 100,
   'best-practices': 100,
   seo: 100,
