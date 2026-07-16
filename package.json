@@ -20,7 +20,8 @@
     "ts:check": "tsc",
     "pw:ts:check": "tsc --project playwright/tsconfig.json",
     "__c2": "====================[ Playwright Testing ]=======================",
-    "test:e2e": "yarn pw:run",
+    "test:e2e": "yarn pw:run --project=e2e",
+    "test:a11y": "yarn pw:run --project=a11y --project=a11y:mobile",
     "pw:run": "playwright test",
     "pw:open": "playwright test --ui",
     "pw:report": "playwright show-report playwright/results/html",
@@ -53,6 +54,7 @@
     "react-leaflet": "^4"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12",
     "@biomejs/biome": "^2.3",
     "@playwright/test": "^1.61",
     "@tailwindcss/vite": "^4.1",
@@ -66,6 +68,7 @@
     "@types/react-dom": "^18",
     "@types/xmldom": "^0.1",
     "@vitejs/plugin-react": "^6",
+    "axe-core": "^4.12.1",
     "dotenv": "^16",
     "geojson": "^0.5.0",
     "tailwindcss": "^4.1",

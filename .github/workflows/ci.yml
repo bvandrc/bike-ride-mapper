@@ -1,6 +1,9 @@
 name: CI
 
 on:
+  push:
+    branches:
+      - master
   pull_request:
   workflow_dispatch: # Allows manual triggering
 
@@ -19,6 +22,8 @@ jobs:
 
       - name: Setup Node
         uses: actions/setup-node@v4
+        with:
+          cache: yarn
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -26,9 +31,14 @@ jobs:
       - name: Linting
         run: yarn lint
 
-  e2e:
-    name: E2E Tests
+  test:
+    name: Test (${{ matrix.suite }})
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [e2e, a11y]
 
     env:
       PORT: 4173
@@ -39,6 +49,8 @@ jobs:
 
       - name: Setup Node
         uses: actions/setup-node@v4
+        with:
+          cache: yarn
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4
@@ -74,12 +86,12 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run Playwright tests
-        run: yarn pw:run
+        run: yarn test:${{ matrix.suite }}
 
       - name: Upload results on failure
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-results
+          name: playwright-results-${{ matrix.suite }}
           path: playwright/results
           if-no-files-found: ignore
