@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://bvandercar-vt.github.io/bike-ride-mapper/sitemap.xml
+Sitemap: https://bvandrc.github.io/bike-ride-mapper/sitemap.xml
