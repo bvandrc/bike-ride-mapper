@@ -38,7 +38,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [e2e, a11y]
+        suite: [e2e, a11y, lighthouse]
 
     env:
       PORT: 4173

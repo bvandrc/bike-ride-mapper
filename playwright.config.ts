@@ -7,6 +7,15 @@ const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? `http://localhost:${PORT}`
 
 const E2E_TEST_REGEX = /e2e\/.*\.spec\.ts/
 const A11Y_TEST_REGEX = /a11y\/.*\.spec\.ts/
+const LIGHTHOUSE_TEST_REGEX = /lighthouse\/.*\.spec\.ts/
+
+// No device config: the lighthouse fixtures launch their own persistent context.
+const LIGHTHOUSE_PROJECT = {
+  testMatch: LIGHTHOUSE_TEST_REGEX,
+  fullyParallel: false,
+  // each test runs a full desktop + mobile audit
+  timeout: 5 * 60_000,
+} satisfies Partial<Project>
 
 const getProject = ({
   mobile,
@@ -44,5 +53,17 @@ export default defineConfig({
       testMatch: A11Y_TEST_REGEX,
       mobile: true,
     }),
+    {
+      ...LIGHTHOUSE_PROJECT,
+      name: 'lighthouse',
+    },
+    {
+      // audits the deployed site instead of the local preview server
+      ...LIGHTHOUSE_PROJECT,
+      name: 'lighthouse:production',
+      use: {
+        baseURL: 'https://bvandercar-vt.github.io/bike-ride-mapper/',
+      },
+    },
   ],
 })

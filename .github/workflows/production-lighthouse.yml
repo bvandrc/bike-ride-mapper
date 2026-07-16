@@ -1,0 +1,79 @@
+name: Production Lighthouse
+
+on:
+  workflow_run:
+    workflows: ['Lint, Build, Deploy']
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: URL to audit
+        required: false
+        default: https://bvandercar-vt.github.io/bike-ride-mapper/
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    name: Lighthouse
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    # run after every deploy that succeeded, or on manual dispatch
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+
+    env:
+      PLAYWRIGHT_BASE_URL: ${{ github.event.inputs.target_url || 'https://bvandercar-vt.github.io/bike-ride-mapper/' }}
+
+    steps:
+      - name: Wait 15 minutes for the deploy to propagate
+        if: github.event_name == 'workflow_run'
+        run: sleep 900
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          cache: yarn
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Check target URL is reachable
+        run: |
+          echo "Checking $PLAYWRIGHT_BASE_URL..."
+          for i in $(seq 1 10); do
+            if curl -sf "$PLAYWRIGHT_BASE_URL" > /dev/null 2>&1; then
+              echo "Target is reachable"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Target URL is not reachable"
+          exit 1
+
+      - name: Run Lighthouse audits
+        run: yarn test:lighthouse:production
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: playwright/results
+          if-no-files-found: ignore
