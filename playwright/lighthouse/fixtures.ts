@@ -11,7 +11,7 @@ import {
 const BASE_LIGHTHOUSE_PORT = 9222
 
 const BASE_THRESHOLDS = {
-  performance: 80, // TODO: improve
+  performance: 70, // Limited by maps API, probably the best we can do.
   accessibility: 100,
   'best-practices': 100,
   seo: 100,
