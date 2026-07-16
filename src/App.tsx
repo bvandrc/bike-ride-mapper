@@ -136,68 +136,70 @@ export const App = () => {
           </div>
         </div>
       </header>
-      <MapContainer
-        center={latLng(39.732_725_8, -104.985_146_9)}
-        zoom={13}
-        zoomControl={false}
-        id="map"
-        className="absolute inset-0 z-[1]"
-        ref={mapRef}
-      >
-        <MapHandlers
-          baselayerchange={(e) => {
-            setIsSatellite(e.name === 'Satellite')
-          }}
-          overlayadd={() => {
-            setBikeTrailsStyle()
-            changeVisibleData()
-          }}
-          overlayremove={() => {
-            changeVisibleData()
-          }}
-        />
-        <LayersControl position="topleft" collapsed={false}>
-          <LayersControl.BaseLayer name="Default" checked>
-            <TileLayer
-              url={`https://api.maptiler.com/maps/streets-v2-dark/{z}/{x}/{y}.png?key=${MAPTILER_API_KEY}`}
-              tileSize={512}
-              zoomOffset={-1}
-              minZoom={1}
-              crossOrigin={true}
-            />
-          </LayersControl.BaseLayer>
-          <LayersControl.BaseLayer name="Satellite">
-            <TileLayer
-              url={`https://api.maptiler.com/maps/hybrid/{z}/{x}/{y}.jpg?key=${MAPTILER_API_KEY}`}
-              tileSize={512}
-              zoomOffset={-1}
-              minZoom={1}
-              crossOrigin={true}
-            />
-          </LayersControl.BaseLayer>
-          <LayersControl.Overlay name="Bike Trails">
-            <TileLayer
-              url={'http://{s}.google.com/vt/lyrs=bike&x={x}&y={y}&z={z}'}
-              subdomains={['mt0', 'mt1', 'mt2', 'mt3']}
-              opacity={0.5}
-              maxZoom={20}
-              className="bike-trails"
-            />
-          </LayersControl.Overlay>
-          <HoveredRouteProvider>
-            {layerData.map(({ name, data, layerRef }) => (
-              <LayersControl.Overlay name={name} checked key={name}>
-                <RouteLayer
-                  data={data}
-                  layerRef={layerRef}
-                  color={isSatellite ? 'magenta' : 'lime'}
-                  hoverColor={isSatellite ? 'yellow' : 'orangered'}
-                />
-              </LayersControl.Overlay>
-            ))}
-          </HoveredRouteProvider>
-        </LayersControl>
-      </MapContainer>
+      <main className="absolute inset-0 z-1">
+        <MapContainer
+          center={latLng(39.732_725_8, -104.985_146_9)}
+          zoom={13}
+          zoomControl={false}
+          id="map"
+          className="size-full"
+          ref={mapRef}
+        >
+          <MapHandlers
+            baselayerchange={(e) => {
+              setIsSatellite(e.name === 'Satellite')
+            }}
+            overlayadd={() => {
+              setBikeTrailsStyle()
+              changeVisibleData()
+            }}
+            overlayremove={() => {
+              changeVisibleData()
+            }}
+          />
+          <LayersControl position="topleft" collapsed={false}>
+            <LayersControl.BaseLayer name="Default" checked>
+              <TileLayer
+                url={`https://api.maptiler.com/maps/streets-v2-dark/{z}/{x}/{y}.png?key=${MAPTILER_API_KEY}`}
+                tileSize={512}
+                zoomOffset={-1}
+                minZoom={1}
+                crossOrigin={true}
+              />
+            </LayersControl.BaseLayer>
+            <LayersControl.BaseLayer name="Satellite">
+              <TileLayer
+                url={`https://api.maptiler.com/maps/hybrid/{z}/{x}/{y}.jpg?key=${MAPTILER_API_KEY}`}
+                tileSize={512}
+                zoomOffset={-1}
+                minZoom={1}
+                crossOrigin={true}
+              />
+            </LayersControl.BaseLayer>
+            <LayersControl.Overlay name="Bike Trails">
+              <TileLayer
+                url={'http://{s}.google.com/vt/lyrs=bike&x={x}&y={y}&z={z}'}
+                subdomains={['mt0', 'mt1', 'mt2', 'mt3']}
+                opacity={0.5}
+                maxZoom={20}
+                className="bike-trails"
+              />
+            </LayersControl.Overlay>
+            <HoveredRouteProvider>
+              {layerData.map(({ name, data, layerRef }) => (
+                <LayersControl.Overlay name={name} checked key={name}>
+                  <RouteLayer
+                    data={data}
+                    layerRef={layerRef}
+                    color={isSatellite ? 'magenta' : 'lime'}
+                    hoverColor={isSatellite ? 'yellow' : 'orangered'}
+                  />
+                </LayersControl.Overlay>
+              ))}
+            </HoveredRouteProvider>
+          </LayersControl>
+        </MapContainer>
+      </main>
     </div>
   )
 }
