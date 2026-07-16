@@ -61,9 +61,7 @@ export default defineConfig({
       // audits the deployed site instead of the local preview server
       ...LIGHTHOUSE_PROJECT,
       name: 'lighthouse:production',
-      use: {
-        baseURL: 'https://bvandercar-vt.github.io/bike-ride-mapper/',
-      },
+      use: { baseURL: 'https://bvandrc.github.io/bike-ride-mapper/' },
     },
   ],
 })

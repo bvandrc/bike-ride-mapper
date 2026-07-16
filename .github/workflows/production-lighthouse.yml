@@ -9,7 +9,7 @@ on:
       target_url:
         description: URL to audit
         required: false
-        default: https://bvandercar-vt.github.io/bike-ride-mapper/
+        default: https://bvandrc.github.io/bike-ride-mapper/
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
@@ -27,7 +27,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
 
     env:
-      PLAYWRIGHT_BASE_URL: ${{ github.event.inputs.target_url || 'https://bvandercar-vt.github.io/bike-ride-mapper/' }}
+      PLAYWRIGHT_BASE_URL: ${{ github.event.inputs.target_url || 'https://bvandrc.github.io/bike-ride-mapper/' }}
 
     steps:
       - name: Wait 15 minutes for the deploy to propagate
@@ -35,15 +35,15 @@ jobs:
         run: sleep 900
 
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           cache: yarn
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
@@ -66,7 +66,7 @@ jobs:
         run: yarn test:lighthouse:production
 
       - name: Upload reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: lighthouse-reports
