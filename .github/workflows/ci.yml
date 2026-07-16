@@ -70,17 +70,12 @@ jobs:
         run: yarn preview:ci &
 
       - name: Wait for server to be ready
-        run: |
-          echo "Waiting for server on port $PORT..."
-          for i in $(seq 1 30); do
-            if curl -sf http://localhost:$PORT/ > /dev/null 2>&1; then
-              echo "Server is ready after ${i}s"
-              exit 0
-            fi
-            sleep 1
-          done
-          echo "Server failed to start within 30s"
-          exit 1
+        uses: jtalk/url-health-check-action@v5
+        with:
+          url: http://localhost:${{ env.PORT }}/
+          max-attempts: 30
+          retry-delay: 1s
+          retry-all: true
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
