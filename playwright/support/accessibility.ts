@@ -2,11 +2,6 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, type Page } from '@playwright/test'
 import type { ImpactValue, Result } from 'axe-core'
 
-const IGNORED_IMPACTS = [
-  'minor',
-  'moderate',
-] as const satisfies readonly ImpactValue[]
-
 function formatViolations(violations: Result[]): string {
   return violations
     .map(
@@ -34,7 +29,10 @@ export async function checkA11y(
   const failures = violations.filter(
     (v) =>
       !v.impact ||
-      !(IGNORED_IMPACTS as readonly ImpactValue[]).includes(v.impact),
+      !(
+        // TODO: resolve and remove
+        ['minor', 'moderate'] satisfies ImpactValue[] as ImpactValue[]
+      ).includes(v.impact),
   )
 
   expect(failures, formatViolations(failures)).toEqual([])
