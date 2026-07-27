@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { SELECTORS } from '../support/constants'
 
 test('home page loads', async ({ page }) => {
   await page.goto('/')
@@ -10,11 +11,11 @@ test('home page loads', async ({ page }) => {
   await expect(page.getByText('Bike Records')).toBeVisible()
 
   // workout routes stream in and populate the header stats
-  await expect(page.getByText(/# Routes: \d+/)).toBeVisible({
+  await expect(page.getByText(SELECTORS.ROUTES_COUNT_TEXT)).toBeVisible({
     timeout: 15_000,
   })
 
-  await expect(page.locator('.leaflet-interactive')).toBeAttached({
+  await expect(page.locator(SELECTORS.LEAFLET_INTERACTIVE)).toBeAttached({
     timeout: 15_000,
   })
 })
