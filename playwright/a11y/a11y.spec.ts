@@ -6,13 +6,16 @@ import { checkA11y } from '../support/accessibility'
 test('Home page', async ({ page }) => {
   await page.goto('/')
 
-  await test.step('Page', async () => {
-    // workout routes stream in and populate the header stats
-    await expect(page.getByText(/# Routes: \d+/)).toBeVisible({
-      timeout: 15_000,
-    })
-    await checkA11y(page)
+  // workout routes stream in and populate the header stats
+  await expect(page.getByText(/# Routes: \d+/)).toBeVisible({
+    timeout: 15_000,
   })
+  await checkA11y(page)
+
+  await expect(page.locator('.leaflet-interactive')).toBeAttached({
+    timeout: 15_000,
+  })
+  await checkA11y(page)
 
   await test.step('Toggled route layer', async () => {
     const walkLayerToggle = page.getByRole('checkbox', {

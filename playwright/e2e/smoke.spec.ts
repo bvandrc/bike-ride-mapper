@@ -13,4 +13,8 @@ test('home page loads', async ({ page }) => {
   await expect(page.getByText(/# Routes: \d+/)).toBeVisible({
     timeout: 15_000,
   })
+
+  await expect(page.locator('.leaflet-interactive')).toBeAttached({
+    timeout: 15_000,
+  })
 })
