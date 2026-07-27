@@ -31,7 +31,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "correctness": {
         "noUndeclaredDependencies": "error",
         "noUnusedFunctionParameters": "error",
@@ -43,27 +43,19 @@
         "useParseIntRadix": "off"
       },
       "nursery": {
-        "noDeprecatedImports": "off",
-        "noFloatingPromises": "error",
-        "noImportCycles": "error",
-        "noShadow": "error"
+        "noFloatingPromises": "error"
       },
       "performance": {
         "noAccumulatingSpread": "error",
-        "noAwaitInLoops": "off",
         "noDelete": "error",
-        // "noNamespaceImport": "error",
-        "noReExportAll": "off"
+        "noNamespaceImport": "error"
       },
       "style": {
         "noCommonJs": "error",
         "noInferrableTypes": "error",
         "noParameterAssign": "error",
         "noSubstr": "error",
-        "noUnusedTemplateLiteral": {
-          "level": "error",
-          "fix": "safe"
-        },
+        "noUnusedTemplateLiteral": "error",
         "noYodaExpression": "error",
         "useArrayLiterals": "error",
         "useAsConstAssertion": "error",
@@ -86,10 +78,7 @@
         },
         "useNumericSeparators": "error",
         "useObjectSpread": "error",
-        "useReadonlyClassProperties": {
-          "level": "error",
-          "fix": "unsafe"
-        }
+        "useReadonlyClassProperties": "error"
       },
       "suspicious": {
         "noEmptyBlockStatements": "error",
@@ -99,7 +88,10 @@
         "noTsIgnore": "error",
         "noUnassignedVariables": "error",
         "noUselessEscapeInString": "error",
-        "noUnknownAtRules": "off"
+        "noUnknownAtRules": "off",
+        "noDeprecatedImports": "error",
+        "noImportCycles": "error",
+        "noShadow": "error"
       }
     }
   },

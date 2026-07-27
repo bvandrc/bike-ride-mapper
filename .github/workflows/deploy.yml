@@ -15,14 +15,19 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v7
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node
         uses: actions/setup-node@v7
+        with:
+          cache: pnpm
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Lint & Type Check
-        run: yarn run check
+        run: pnpm run check
 
   build:
     name: Build
@@ -33,16 +38,21 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v7
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node
         uses: actions/setup-node@v7
+        with:
+          cache: pnpm
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Build project
         env:
           MAPTILER_API_KEY: ${{ secrets.MAPTILER_API_KEY }}
-        run: yarn build
+        run: pnpm build
 
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v7

@@ -1,29 +1,45 @@
 {
   "name": "bike-ride-mapper",
-  "private": true,
   "version": "1.0.0",
-  "type": "module",
+  "private": true,
   "description": "MapMyRide Mapper",
-  "main": "index.js",
+  "keywords": [
+    "MapMyRide",
+    "bike tracker",
+    "bike mapper",
+    "cycling"
+  ],
   "homepage": "TODO.com",
+  "bugs": {
+    "url": "https://github.com/bvandrc/TODO/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bvandrc/TODO"
+  },
+  "author": "Blake Vandercar",
+  "license": "ISC",
+  "type": "module",
+  "main": "index.js",
+  "packageManager": "pnpm@11.9.0",
   "scripts": {
     "__c0": "====================[ Build & Development ]======================",
-    "start": "yarn dev",
+    "start": "pnpm dev",
     "dev": "vite --open",
-    "prebuild": "yarn build:workouts",
+    "prebuild": "pnpm build:workouts",
     "build": "vite build",
-    "preview": "yarn build && vite preview --open",
+    "preview": "pnpm build && vite preview --open",
     "preview:ci": "vite preview --strictPort",
     "__c1": "====================[ Linting & Type Checking ]==================",
-    "check": "yarn format && yarn ts:check && yarn pw:ts:check",
+    "check": "pnpm format && pnpm ts:check && pnpm pw:ts:check",
     "format": "npx biome check . --fix",
     "ts:check": "tsc",
     "pw:ts:check": "tsc --project playwright/tsconfig.json",
     "__c2": "====================[ Playwright Testing ]=======================",
-    "test:e2e": "yarn pw:run --project=e2e",
-    "test:a11y": "yarn pw:run --project=a11y --project=a11y:mobile",
-    "test:lighthouse": "yarn pw:run --project=lighthouse",
-    "test:lighthouse:production": "yarn pw:run --project=lighthouse:production",
+    "test:e2e": "pnpm pw:run --project=e2e",
+    "test:a11y": "pnpm pw:run --project=a11y --project=a11y:mobile",
+    "test:lighthouse": "pnpm pw:run --project=lighthouse",
+    "test:lighthouse:production": "pnpm pw:run --project=lighthouse:production",
     "pw:run": "playwright test",
     "pw:open": "playwright test --ui",
     "pw:report": "playwright show-report playwright/results/html",
@@ -31,18 +47,6 @@
     "get-data": "npx tsx ./scripts/get-workouts.ts",
     "get-mmr-token": "npx tsx ./scripts/get-mmr-token.ts",
     "build:workouts": "npx tsx ./scripts/build-workouts-ndjson.ts"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bvandrc/TODO"
-  },
-  "keywords": [
-    "MapMyRide"
-  ],
-  "author": "Blake Vandercar",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/bvandrc/TODO/issues"
   },
   "dependencies": {
     "classnames": "^2",
@@ -57,11 +61,12 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4",
-    "@biomejs/biome": "2.3",
+    "@biomejs/biome": "^2",
     "@playwright/test": "^1",
     "@tailwindcss/vite": "^4",
     "@tmcw/togeojson": "^7",
     "@turf/simplify": "^7",
+    "@types/geojson": "^7946.0.16",
     "@types/leaflet": "^1.9",
     "@types/leaflet-polylinedecorator": "^1",
     "@types/luxon": "^3",
@@ -72,7 +77,6 @@
     "@vitejs/plugin-react": "^6",
     "axe-core": "^4",
     "dotenv": "^16",
-    "geojson": "^0.5.0",
     "lighthouse": "^13",
     "playwright-lighthouse": "^4",
     "tailwindcss": "^4",

@@ -14,15 +14,20 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v7
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node
         uses: actions/setup-node@v7
+        with:
+          cache: pnpm
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Get Data
         env:
           MMR_CLIENT_ID: ${{ secrets.MMR_CLIENT_ID }}
           MMR_AUTH_TOKEN: ${{ secrets.MMR_AUTH_TOKEN }}
           MMR_USER_ID: ${{ secrets.MMR_USER_ID }}
-        run: yarn get-data
+        run: pnpm get-data
