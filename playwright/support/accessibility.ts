@@ -31,7 +31,7 @@ export async function checkA11y(
       !v.impact ||
       !(
         // TODO: resolve and remove
-        ['minor', 'moderate'] satisfies ImpactValue[] as ImpactValue[]
+        ['minor'] satisfies ImpactValue[] as ImpactValue[]
       ).includes(v.impact),
   )
 
