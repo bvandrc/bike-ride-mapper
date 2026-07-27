@@ -54,6 +54,9 @@ importers:
       '@turf/simplify':
         specifier: ^7
         version: 7.3.5
+      '@types/geojson':
+        specifier: ^7946.0.16
+        version: 7946.0.16
       '@types/leaflet':
         specifier: ^1.9
         version: 1.9.21
@@ -84,9 +87,6 @@ importers:
       dotenv:
         specifier: ^16
         version: 16.6.1
-      geojson:
-        specifier: ^0.5.0
-        version: 0.5.0
       lighthouse:
         specifier: ^13
         version: 13.4.1(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))
@@ -1061,10 +1061,6 @@ packages:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
-
-  geojson@0.5.0:
-    resolution: {integrity: sha512-/Bx5lEn+qRF4TfQ5aLu6NH+UKtvIv7Lhc487y/c8BdludrCTpiWf9wyI0RTyqg49MFefIAvFDuEi5Dfd/zgNxQ==}
-    engines: {node: '>= 0.10'}
 
   get-caller-file@2.0.5:
     resolution: {integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==}
@@ -2386,8 +2382,6 @@ snapshots:
 
   fsevents@2.3.3:
     optional: true
-
-  geojson@0.5.0: {}
 
   get-caller-file@2.0.5: {}
 
