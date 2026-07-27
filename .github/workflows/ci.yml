@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   lint:
-    name: Lint
+    name: Lint & Type Check
     runs-on: ubuntu-latest
 
     steps:
@@ -28,8 +28,8 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Linting
-        run: yarn lint
+      - name: Lint & Type Check
+        run: yarn run check
 
   test:
     name: Test (${{ matrix.suite }})
