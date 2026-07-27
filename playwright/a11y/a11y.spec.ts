@@ -13,7 +13,9 @@ test('Home page', async ({ page }) => {
   })
   await checkA11y(page)
 
-  await expect(page.locator(SELECTORS.LEAFLET_INTERACTIVE)).toBeAttached({
+  await expect(
+    page.locator(SELECTORS.LEAFLET_INTERACTIVE).first(),
+  ).toBeAttached({
     timeout: 15_000,
   })
   await checkA11y(page)

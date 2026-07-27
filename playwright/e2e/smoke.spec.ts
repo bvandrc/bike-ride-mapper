@@ -15,7 +15,9 @@ test('home page loads', async ({ page }) => {
     timeout: 15_000,
   })
 
-  await expect(page.locator(SELECTORS.LEAFLET_INTERACTIVE)).toBeAttached({
+  await expect(
+    page.locator(SELECTORS.LEAFLET_INTERACTIVE).first(),
+  ).toBeAttached({
     timeout: 15_000,
   })
 })
