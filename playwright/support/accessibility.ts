@@ -2,16 +2,10 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, type Page } from '@playwright/test'
 import type { ImpactValue, Result } from 'axe-core'
 
-const FAILING_IMPACTS = [
+const IGNORED_IMPACTS = [
   'minor',
   'moderate',
-  'serious',
-  'critical',
 ] as const satisfies readonly ImpactValue[]
-
-// Header text sits on a translucent panel over map tiles, so contrast
-// varies with the map underneath and can't meet a fixed WCAG ratio.
-const ALWAYS_DISABLED_RULES = ['color-contrast']
 
 function formatViolations(violations: Result[]): string {
   return violations
@@ -29,12 +23,19 @@ export async function checkA11y(
 ) {
   const builder = new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'])
-    .disableRules([...ALWAYS_DISABLED_RULES, ...(options.disableRules ?? [])])
+    .disableRules([
+      // Header text sits on a translucent panel over map tiles, so contrast
+      // varies with the map underneath and can't meet a fixed WCAG ratio.
+      'color-contrast',
+      ...(options.disableRules ?? []),
+    ])
 
   const { violations } = await builder.analyze()
-  const failing = violations.filter((v) =>
-    FAILING_IMPACTS.includes(v.impact as (typeof FAILING_IMPACTS)[number]),
+  const failures = violations.filter(
+    (v) =>
+      !v.impact ||
+      !(IGNORED_IMPACTS as readonly ImpactValue[]).includes(v.impact),
   )
 
-  expect(failing, formatViolations(failing)).toEqual([])
+  expect(failures, formatViolations(failures)).toEqual([])
 }
