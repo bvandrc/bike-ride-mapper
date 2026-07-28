@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
-import { checkA11y } from '../support/accessibility'
 import { SELECTORS } from '../support/constants'
+import { checkA11y } from './accessibility'
 
 // One "workflow" test: the page with routes loaded, then with a route
 // layer toggled off — scanned once each.

@@ -92,10 +92,11 @@ jobs:
       - name: Run Playwright tests
         run: pnpm test:${{ matrix.suite }}
 
-      - name: Upload results on failure
+      - name: Upload results
         uses: actions/upload-artifact@v7
-        if: failure()
+        if: always()
         with:
           name: playwright-results-${{ matrix.suite }}
           path: playwright/results
           if-no-files-found: ignore
+          retention-days: 7

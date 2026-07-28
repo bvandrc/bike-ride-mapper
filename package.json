@@ -78,7 +78,7 @@
     "axe-core": "^4",
     "dotenv": "^16",
     "lighthouse": "^13",
-    "playwright-lighthouse": "^4",
+    "lighthouse-audit-utils": "^1",
     "tailwindcss": "^4",
     "tsx": "^4",
     "type-fest": "^5",
