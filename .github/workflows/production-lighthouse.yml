@@ -37,25 +37,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v7
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: Setup
+        uses: ./.github/actions/setup
 
-      - name: Setup Node
-        uses: actions/setup-node@v7
-        with:
-          cache: pnpm
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v6
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+      - name: Setup Playwright
+        uses: ./.github/actions/setup-playwright
 
       - name: Check target URL is reachable
         uses: jtalk/url-health-check-action@v5

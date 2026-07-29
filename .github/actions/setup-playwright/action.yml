@@ -1,0 +1,16 @@
+name: Setup Playwright
+description: Restore the Playwright browser cache and install Chromium.
+
+runs:
+  using: composite
+
+  steps:
+    - name: Cache Playwright browsers
+      uses: actions/cache@v6
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps chromium
+      shell: bash

@@ -20,16 +20,8 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v7
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v7
-        with:
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Setup
+        uses: ./.github/actions/setup
 
       - name: Check package.json key order
         uses: bvandrc/lint-package-json@v1
@@ -53,22 +45,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v7
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: Setup
+        uses: ./.github/actions/setup
 
-      - name: Setup Node
-        uses: actions/setup-node@v7
-        with:
-          cache: pnpm
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v6
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Setup Playwright
+        uses: ./.github/actions/setup-playwright
 
       - name: Build project
         env:
@@ -85,9 +66,6 @@ jobs:
           max-attempts: 30
           retry-delay: 1s
           retry-all: true
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
 
       - name: Run Playwright tests
         run: pnpm test:${{ matrix.suite }}
