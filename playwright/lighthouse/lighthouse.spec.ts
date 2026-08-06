@@ -13,9 +13,11 @@ test('Home page', async ({ page, runAudit }) => {
     await runAudit({ name: 'initial-mobile' })
   })
 
-  // workout routes stream in and populate the header stats
+  // workout routes stream in and populate the header stats; on production the
+  // real network (plus lingering throttling from the mobile audit) can be much
+  // slower than the local preview server, so give it more room than 15s.
   await expect(page.getByText(/# Routes: \d+/)).toBeVisible({
-    timeout: 15_000,
+    timeout: 60_000,
   })
 
   await test.step('loaded', async () => {
