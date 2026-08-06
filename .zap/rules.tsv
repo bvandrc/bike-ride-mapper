@@ -1,3 +1,4 @@
+10038	IGNORE	(Content Security Policy (CSP) Header Not Set) — GitHub Pages can't send a real CSP header; a <meta> CSP was tried but ZAP flags meta-only frame-ancestors as invalid and it triggered a browser console error that failed the Lighthouse best-practices audit, so it was reverted.
 10020	IGNORE	(Missing Anti-clickjacking Header) — site is a static GitHub Pages deployment with no server to set X-Frame-Options; frame-ancestors CSP requires a real HTTP header (ignored via <meta>) which GH Pages can't send.
 10021	IGNORE	(X-Content-Type-Options Header Missing) — GitHub Pages serves static files without custom response headers; there is no server layer to add this header from.
 10027	IGNORE	(Information Disclosure - Suspicious Comments) — heuristic match on "TODO" markers in index.html; these are dev placeholders, not sensitive data.
