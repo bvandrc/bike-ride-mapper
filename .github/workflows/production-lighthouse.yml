@@ -1,9 +1,14 @@
 name: Production Lighthouse
 
+# Triggers after Build & Deploy completes successfully on main, then polls
+# for the GitHub Pages deploy to land before running Lighthouse audits.
+# If no deploy is detected, the lighthouse job is skipped.
+
 on:
   workflow_run:
-    workflows: ['Lint, Build, Deploy']
+    workflows: ["Build & Deploy"]
     types: [completed]
+    branches: [main]
   workflow_dispatch:
     inputs:
       target_url:
@@ -12,28 +17,39 @@ on:
         default: https://bvandrc.github.io/bike-ride-mapper/
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  group: ${{ github.workflow }}
   cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
+  wait-for-deploy:
+    name: Wait for deploy
+    if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      deployed: ${{ steps.poll.outputs.deployed }}
+
+    steps:
+      - name: Poll for deploy
+        id: poll
+        uses: bvandrc/poll-for-deploy@v1
+        with:
+          url: https://bvandrc.github.io/bike-ride-mapper/
+
   lighthouse:
     name: Lighthouse
+    needs: [wait-for-deploy]
+    if: always() && (github.event_name == 'workflow_dispatch' || needs.wait-for-deploy.outputs.deployed == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    # run after every deploy that succeeded, or on manual dispatch
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
 
     env:
       PLAYWRIGHT_BASE_URL: ${{ github.event.inputs.target_url || 'https://bvandrc.github.io/bike-ride-mapper/' }}
 
     steps:
-      - name: Wait 15 minutes for the deploy to propagate
-        if: github.event_name == 'workflow_run'
-        run: sleep 900
-
       - name: Checkout repo
         uses: actions/checkout@v7
 

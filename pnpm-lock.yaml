@@ -92,7 +92,7 @@ importers:
         version: 13.4.1(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))
       lighthouse-audit-utils:
         specifier: ^1
-        version: 1.2.1(@playwright/test@1.62.0)(lighthouse@13.4.1(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1)))
+        version: 1.2.4(@playwright/test@1.62.0)(lighthouse@13.4.1(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1)))
       tailwindcss:
         specifier: ^4
         version: 4.3.3
@@ -1122,8 +1122,8 @@ packages:
   legacy-javascript@0.0.1:
     resolution: {integrity: sha512-lPyntS4/aS7jpuvOlitZDFifBCb4W8L/3QU0PLbUTUj+zYah8rfVjYic88yG7ZKTxhS5h9iz7duT8oUXKszLhg==}
 
-  lighthouse-audit-utils@1.2.1:
-    resolution: {integrity: sha512-7JkLz2HHS3w/r6GUFc7PuavyEeDDG/gTVLucEHInZCn7dqjp5r+rStUEs4YlGyZHiwGSc9cD9JWaEUsqgoAWSQ==}
+  lighthouse-audit-utils@1.2.4:
+    resolution: {integrity: sha512-LfSd/IahlJ07+jvjcHUSnSc5kr06YwyRZcH6LkchdtSwCDzf4w2a8f4IZKOwFNQPFHnvIoe+DtJR1oX+CsteAw==}
     engines: {node: '>=22'}
     peerDependencies:
       '@playwright/test': ^1
@@ -2411,7 +2411,7 @@ snapshots:
 
   legacy-javascript@0.0.1: {}
 
-  lighthouse-audit-utils@1.2.1(@playwright/test@1.62.0)(lighthouse@13.4.1(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))):
+  lighthouse-audit-utils@1.2.4(@playwright/test@1.62.0)(lighthouse@13.4.1(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))):
     dependencies:
       lighthouse: 13.4.1(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))
     optionalDependencies:

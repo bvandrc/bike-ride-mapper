@@ -3,7 +3,7 @@ import { desktopConfig } from 'lighthouse'
 import { lighthouseTest as test } from './fixtures'
 
 test('Home page', async ({ page, runAudit }) => {
-  await page.goto('/')
+  await page.goto('./')
 
   await test.step('initial', async () => {
     await runAudit({
@@ -13,7 +13,7 @@ test('Home page', async ({ page, runAudit }) => {
     await runAudit({ name: 'initial-mobile' })
   })
 
-  // workout routes stream in and populate the header stats
+  // workout routes can take more than default timeout to load.
   await expect(page.getByText(/# Routes: \d+/)).toBeVisible({
     timeout: 15_000,
   })
