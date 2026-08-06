@@ -1,9 +1,13 @@
 name: Production Lighthouse
 
-# Triggered by wait-for-deploy.yml once it detects a new build is actually
-# live (since publishing does not occur in GitHub)
+# On a push to master, polls for the deploy to land before running the
+# Lighthouse audits. If no deploy is detected, the run is cancelled
+# without failing.
 
 on:
+  push:
+    branches:
+      - master
   workflow_dispatch:
     inputs:
       target_url:
@@ -17,10 +21,37 @@ concurrency:
 
 permissions:
   contents: read
+  actions: write
 
 jobs:
+  wait-for-deploy:
+    name: Wait for deploy
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Poll for deploy
+        id: poll
+        uses: bvandrc/poll-for-deploy@v1
+        with:
+          url: https://bvandrc.github.io/bike-ride-mapper/
+
+      - name: Cancel workflow if no deploy detected
+        if: steps.poll.outputs.deployed != 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.cancelWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
+            });
+
   lighthouse:
     name: Lighthouse
+    needs: [wait-for-deploy]
+    if: github.event_name == 'workflow_dispatch' || needs.wait-for-deploy.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
