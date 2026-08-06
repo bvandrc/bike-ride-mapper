@@ -1,8 +1,8 @@
 name: Production Lighthouse
 
 # On a push to main, polls for the deploy to land before running the
-# Lighthouse audits. If no deploy is detected, the run is cancelled
-# without failing.
+# Lighthouse audits. If no deploy is detected, the lighthouse job is
+# skipped (wait-for-deploy still reports success, not cancelled).
 
 on:
   push:
@@ -21,7 +21,6 @@ concurrency:
 
 permissions:
   contents: read
-  actions: write
 
 jobs:
   wait-for-deploy:
@@ -29,6 +28,8 @@ jobs:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    outputs:
+      deployed: ${{ steps.poll.outputs.deployed }}
 
     steps:
       - name: Poll for deploy
@@ -37,21 +38,10 @@ jobs:
         with:
           url: https://bvandrc.github.io/bike-ride-mapper/
 
-      - name: Cancel workflow if no deploy detected
-        if: steps.poll.outputs.deployed != 'true'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.actions.cancelWorkflowRun({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: context.runId,
-            });
-
   lighthouse:
     name: Lighthouse
     needs: [wait-for-deploy]
-    if: github.event_name == 'workflow_dispatch' || needs.wait-for-deploy.result == 'success'
+    if: always() && (github.event_name == 'workflow_dispatch' || needs.wait-for-deploy.outputs.deployed == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
