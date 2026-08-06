@@ -1,13 +1,13 @@
 name: Production Lighthouse
 
-# On a push to master, polls for the deploy to land before running the
+# On a push to main, polls for the deploy to land before running the
 # Lighthouse audits. If no deploy is detected, the run is cancelled
 # without failing.
 
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
     inputs:
       target_url:
