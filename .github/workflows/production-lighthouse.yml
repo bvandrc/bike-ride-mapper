@@ -1,9 +1,9 @@
 name: Production Lighthouse
 
+# Triggered by wait-for-deploy.yml once it detects a new build is actually
+# live (since publishing does not occur in GitHub)
+
 on:
-  workflow_run:
-    workflows: ['Lint, Build, Deploy']
-    types: [completed]
   workflow_dispatch:
     inputs:
       target_url:
@@ -12,7 +12,7 @@ on:
         default: https://bvandrc.github.io/bike-ride-mapper/
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  group: ${{ github.workflow }}
   cancel-in-progress: true
 
 permissions:
@@ -23,17 +23,11 @@ jobs:
     name: Lighthouse
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    # run after every deploy that succeeded, or on manual dispatch
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
 
     env:
       PLAYWRIGHT_BASE_URL: ${{ github.event.inputs.target_url || 'https://bvandrc.github.io/bike-ride-mapper/' }}
 
     steps:
-      - name: Wait 15 minutes for the deploy to propagate
-        if: github.event_name == 'workflow_run'
-        run: sleep 900
-
       - name: Checkout repo
         uses: actions/checkout@v7
 
