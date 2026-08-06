@@ -1,2 +1,8 @@
-10096	IGNORE	(Timestamp Disclosure - Unix) — heuristic match on numbers that look like timestamps in JS bundles; false-positive prone, not an actual disclosure.
-10109	IGNORE	(Modern Web Application) — informational only; confirms the app is an SPA, not a finding to act on.
+10020	IGNORE	(Missing Anti-clickjacking Header) — site is a static GitHub Pages deployment with no server to set X-Frame-Options; frame-ancestors CSP requires a real HTTP header (ignored via <meta>) which GH Pages can't send.
+10021	IGNORE	(X-Content-Type-Options Header Missing) — GitHub Pages serves static files without custom response headers; there is no server layer to add this header from.
+10027	IGNORE	(Information Disclosure - Suspicious Comments) — heuristic match on "TODO" markers in index.html; these are dev placeholders, not sensitive data.
+10049	IGNORE	(Storable/Cacheable Content) — static assets are deliberately cached by the CDN/browser; index.html is intentionally no-cache so deploys are picked up promptly.
+10063	IGNORE	(Permissions Policy Header Not Set) — GitHub Pages serves static files without custom response headers; there is no server layer to add this header from.
+10094	IGNORE	(Base64 Disclosure) — heuristic match on base64-looking strings in the built JS bundle; false-positive prone, not an actual secret leak.
+90004	IGNORE	(Cross-Origin-Embedder-Policy Header Missing or Invalid) — GitHub Pages serves static files without custom response headers; there is no server layer to add this header from.
+90005	IGNORE	(Sec-Fetch-Dest Header is Missing) — this is a request header the browser sends; not something a static host can set.
