@@ -11,6 +11,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+env:
+  MAPTILER_API_KEY: ${{ secrets.MAPTILER_API_KEY }}
+
 jobs:
   lint:
     name: Lint & Type Check
@@ -44,8 +47,6 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Build project
-        env:
-          MAPTILER_API_KEY: ${{ secrets.MAPTILER_API_KEY }}
         run: pnpm build
 
       - name: Start server
@@ -105,8 +106,6 @@ jobs:
         uses: ./.github/actions/setup-playwright
 
       - name: Build project
-        env:
-          MAPTILER_API_KEY: ${{ secrets.MAPTILER_API_KEY }}
         run: pnpm build
 
       - name: Start server
