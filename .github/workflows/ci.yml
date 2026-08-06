@@ -32,51 +32,6 @@ jobs:
       - name: Lint & Type Check
         run: pnpm run check
 
-  zap-security-scan:
-    name: ZAP Security Scan
-    runs-on: ubuntu-latest
-
-    env:
-      PORT: 4173
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v7
-
-      - name: Setup
-        uses: ./.github/actions/setup
-
-      - name: Build project
-        run: pnpm build
-
-      - name: Start server
-        run: pnpm preview:ci &
-
-      - name: Wait for server to be ready
-        uses: jtalk/url-health-check-action@v5
-        with:
-          url: http://localhost:${{ env.PORT }}/bike-ride-mapper/
-          max-attempts: 30
-          retry-delay: 1s
-          retry-all: true
-
-      - name: ZAP Baseline Security Scan
-        uses: zaproxy/action-baseline@v0.14.0
-        with:
-          target: http://localhost:${{ env.PORT }}/bike-ride-mapper/
-          cmd_options: '-a'
-          fail_action: true
-          allow_issue_writing: false
-          rules_file_name: .zap/rules.tsv
-
-      - name: Upload ZAP Security Scan report
-        uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: zap-security-scan-report
-          path: report_html.html
-          if-no-files-found: ignore
-
   playwright:
     name: ${{ matrix.name }}
     runs-on: ubuntu-latest
@@ -105,19 +60,10 @@ jobs:
       - name: Setup Playwright
         uses: ./.github/actions/setup-playwright
 
-      - name: Build project
-        run: pnpm build
-
-      - name: Start server
-        run: pnpm preview:ci &
-
-      - name: Wait for server to be ready
-        uses: jtalk/url-health-check-action@v5
+      - name: Build and serve
+        uses: ./.github/actions/build-and-serve
         with:
-          url: http://localhost:${{ env.PORT }}/
-          max-attempts: 30
-          retry-delay: 1s
-          retry-all: true
+          port: ${{ env.PORT }}
 
       - name: Run Playwright tests
         run: pnpm test:${{ matrix.suite }}
@@ -130,3 +76,40 @@ jobs:
           path: playwright/results
           if-no-files-found: ignore
           retention-days: 7
+
+  zap-security-scan:
+    name: ZAP Security Scan
+    runs-on: ubuntu-latest
+
+    env:
+      PORT: 4173
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Build and serve
+        uses: ./.github/actions/build-and-serve
+        with:
+          port: ${{ env.PORT }}
+          path: /bike-ride-mapper/
+
+      - name: ZAP Baseline Security Scan
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: http://localhost:${{ env.PORT }}/bike-ride-mapper/
+          cmd_options: '-a'
+          fail_action: true
+          allow_issue_writing: false
+          rules_file_name: .zap/rules.tsv
+
+      - name: Upload ZAP Security Scan report
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: zap-security-scan-report
+          path: report_html.html
+          if-no-files-found: ignore
