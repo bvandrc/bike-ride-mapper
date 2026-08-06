@@ -7,3 +7,4 @@
 10094	IGNORE	(Base64 Disclosure) — heuristic match on base64-looking strings in the built JS bundle; false-positive prone, not an actual secret leak.
 90004	IGNORE	(Cross-Origin-Embedder-Policy Header Missing or Invalid) — GitHub Pages serves static files without custom response headers; there is no server layer to add this header from.
 90005	IGNORE	(Sec-Fetch-Dest Header is Missing) — this is a request header the browser sends; not something a static host can set.
+10109	IGNORE	(Modern Web Application) — informational only; confirms the app is an SPA, not a finding to act on.
