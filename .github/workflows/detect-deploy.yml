@@ -9,7 +9,6 @@ on:
     workflows: ['Build & Deploy']
     types: [completed]
     branches: [main]
-  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}
@@ -22,7 +21,7 @@ permissions:
 jobs:
   detect-deploy:
     name: Check for new deploy, trigger workflows if deployed
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 10 # must be longer than detect-deploy max-seconds
 
