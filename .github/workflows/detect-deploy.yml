@@ -1,0 +1,42 @@
+name: Check for New Deploy
+
+# GitHub Pages deploys land asynchronously after Build & Deploy finishes, so a
+# successful build doesn't mean the new version is live yet. Poll for the
+# deploy and dispatch downstream workflows once it's detected.
+
+on:
+  workflow_run:
+    workflows: ['Build & Deploy']
+    types: [completed]
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  detect-deploy:
+    name: Check for new deploy, trigger workflows if deployed
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10 # must be longer than detect-deploy max-seconds
+
+    steps:
+      - name: Detect new deploy
+        id: detect-deploy
+        uses: bvandrc/detect-deploy@v1
+        with:
+          url: https://bvandrc.github.io/bike-ride-mapper/
+          interval-seconds: 20
+          max-seconds: 300 # 5 minutes
+
+      - name: Trigger Production Lighthouse workflow
+        if: steps.detect-deploy.outputs.deployed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        # Needs `actions: write` above, and Settings → Actions → Workflow Permissions must allow write.
+        run: gh workflow run production-lighthouse.yml --ref main --repo ${{ github.repository }}
