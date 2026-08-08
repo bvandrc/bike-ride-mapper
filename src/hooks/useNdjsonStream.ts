@@ -1,5 +1,6 @@
 import readNDJSONStream from 'ndjson-readablestream'
 import { useEffect, useState } from 'react'
+import { useBoolean } from 'usehooks-ts'
 
 export interface NdJsonMeta {
   _meta?: { total: number }
@@ -61,7 +62,11 @@ export function useNdjsonStream<T>(
 ) {
   const [data, setData] = useState<T[]>([])
   const [total, setTotal] = useState<number | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const {
+    value: isLoading,
+    setTrue: startLoading,
+    setFalse: finishLoading,
+  } = useBoolean(true)
   const [error, setError] = useState<unknown>(null)
 
   useEffect(() => {
@@ -69,7 +74,7 @@ export function useNdjsonStream<T>(
 
     setData([])
     setTotal(null)
-    setIsLoading(true)
+    startLoading()
     setError(null)
 
     ndjsonStream<T>({
@@ -82,10 +87,10 @@ export function useNdjsonStream<T>(
       .catch((err) => {
         if (err?.name !== 'AbortError') setError(err)
       })
-      .finally(() => setIsLoading(false))
+      .finally(finishLoading)
 
     return () => ctrl.abort()
-  }, [url, batchSize])
+  }, [url, batchSize, startLoading, finishLoading])
 
   return { data, total, isLoading, error }
 }

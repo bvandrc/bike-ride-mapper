@@ -16,6 +16,7 @@ import {
   TileLayer,
   useMapEvents,
 } from 'react-leaflet'
+import { useBoolean } from 'usehooks-ts'
 
 import { HoveredRouteProvider } from './components/HoveredRouteProvider'
 import { RouteLayer } from './components/RouteLayer'
@@ -56,7 +57,7 @@ const HeaderSubtitle = ({ data }: { data: CustomWorkout[] | null }) => {
 
 export const App = () => {
   const mapRef = useRef<LeafletMap>(null)
-  const [isSatellite, setIsSatellite] = useState<boolean>(false)
+  const { value: isSatellite, setValue: setIsSatellite } = useBoolean(false)
   const [visibleData, setVisibleData] = useState<CustomWorkout[] | null>(null)
   const { workouts: allWorkouts, isLoading, total } = useWorkouts()
 
