@@ -1,20 +1,12 @@
-const FEET_PER_DEGREE_LAT = 364_000 // ~69 miles × 5280 ft/mile
-const FEET_PER_DEGREE_LON_AT_EQUATOR = 365_000 // Approx
+import { distance } from '@turf/distance'
+import type { Position } from 'geojson'
 
-export type Point = [number, number]
+/** GeoJSON coordinate order: `[longitude, latitude]`. */
+export type Point = Position
 
-/** FLAT distance */
-export function getDistanceFeet(
-  [lat1, lon1]: Point,
-  [lat2, lon2]: Point,
-): number {
-  const avgLat = (lat1 + lat2) / 2
-  const latFeet = (lat2 - lat1) * FEET_PER_DEGREE_LAT
-  const lonFeet =
-    (lon2 - lon1) *
-    FEET_PER_DEGREE_LON_AT_EQUATOR *
-    Math.cos((avgLat * Math.PI) / 180)
-  return Math.sqrt(latFeet ** 2 + lonFeet ** 2)
+/** Great-circle distance, in feet. */
+export function getDistanceFeet(from: Point, to: Point): number {
+  return distance(from, to, { units: 'feet' })
 }
 
 export function getMaxDistanceFeet(points: Point[]) {
@@ -26,10 +18,7 @@ export function getMaxDistanceFeet(points: Point[]) {
   let maxDistanceIndex = -1
 
   for (let i = 1; i < points.length; i++) {
-    const prev = points[i - 1]
-    const curr = points[i]
-
-    const distanceFeet = getDistanceFeet(prev, curr)
+    const distanceFeet = getDistanceFeet(points[i - 1], points[i])
     if (distanceFeet > maxDistance) {
       maxDistance = distanceFeet
       maxDistanceIndex = i
