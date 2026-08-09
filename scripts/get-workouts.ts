@@ -1,8 +1,9 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { gpx as gpxToGeoJson } from '@tmcw/togeojson'
+import { DOMParser } from '@xmldom/xmldom'
+import { mapAsync } from 'es-toolkit'
 import type { LineString } from 'geojson'
 import { DateTime } from 'luxon'
-import { DOMParser } from 'xmldom'
 
 import type { CustomWorkout } from '../src/types'
 import {
@@ -11,10 +12,12 @@ import {
   type Route,
 } from '../src/types/mapMyRide'
 import { MapMyRideClient } from './api/map-my-ride.api'
-import type { Point } from './utils/coordinates'
 import { validatePointsDistance } from './utils/coordinates'
 import { simplifyGeoJson } from './utils/geoJson'
 import { getEnv } from './utils/get-env'
+
+/** Keeps the per-workout fan-out from flooding the MapMyRide API. */
+const REQUEST_CONCURRENCY = 8
 
 const { MMR_USER_ID } = getEnv('MMR_USER_ID')
 
@@ -27,8 +30,9 @@ console.log('converting GPX to GeoJson and writing to files..')
 let errored = false
 let totalNumPointsUnsimplified = 0
 let totalNumPointsSimplified = 0
-await Promise.all(
-  workouts.map(async (workout) => {
+await mapAsync(
+  workouts,
+  async (workout) => {
     const workoutDate = DateTime.fromISO(workout.start_datetime, {
       zone: 'America/Denver',
     })
@@ -41,7 +45,7 @@ await Promise.all(
         throw new Error(`unexpected activity name ${activityType.name}`)
 
       const gpxText = await mapMyRideClient.getRoutePathData(route, 'gpx')
-      const gpxDoc = new DOMParser().parseFromString(gpxText)
+      const gpxDoc = new DOMParser().parseFromString(gpxText, 'text/xml')
       const geoJson = gpxToGeoJson(gpxDoc)
 
       const id = `workout-${workoutDate.toFormat('yyyy-LL-dd-HH-mm-ss')}`
@@ -64,7 +68,7 @@ await Promise.all(
         existingWorkout?.pathHasIssue
       ) {
         const pathPoints = (geoJson.features[0].geometry as LineString)
-          .coordinates as Point[]
+          .coordinates
         try {
           validatePointsDistance(pathPoints, {
             maxRouteDistanceFt: 500,
@@ -103,11 +107,16 @@ await Promise.all(
         console.error('An unknown error occurred:', error)
       }
     }
-  }),
+  },
+  { concurrency: REQUEST_CONCURRENCY },
 )
 
+const pointsRemoved = totalNumPointsUnsimplified - totalNumPointsSimplified
+const percentRemoved = totalNumPointsUnsimplified
+  ? (pointsRemoved / totalNumPointsUnsimplified) * 100
+  : 0
 console.log(
-  `GeoJsons simplified by ${totalNumPointsUnsimplified - totalNumPointsSimplified} data points (${(((totalNumPointsSimplified - totalNumPointsUnsimplified) / totalNumPointsUnsimplified) * 100).toFixed(0)}%)`,
+  `GeoJsons simplified by ${pointsRemoved} data points (${percentRemoved.toFixed(0)}%)`,
 )
 
 if (errored) {

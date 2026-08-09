@@ -1,12 +1,9 @@
 import readNDJSONStream from 'ndjson-readablestream'
 import { useEffect, useState } from 'react'
-
-export interface NdJsonMeta {
-  _meta?: { total: number }
-}
+import type { NdJsonMeta } from '../types'
 
 const isMetaRow = (row: unknown): row is NdJsonMeta =>
-  (row as NdJsonMeta)._meta?.total != null
+  (row as NdJsonMeta | null)?._meta?.total != null
 
 async function ndjsonStream<T>({
   filepath,
@@ -43,8 +40,11 @@ async function ndjsonStream<T>({
     if (batch.length >= batchSize) {
       onBatch?.(batch)
       batch = []
-      // yield so React can paint (optional but helps)
-      await Promise.resolve()
+      // Yield to the event loop (not just the microtask queue) so React can
+      // commit and the browser can paint each batch as it streams in.
+      await new Promise((resolve) => {
+        setTimeout(resolve)
+      })
     }
   }
 
