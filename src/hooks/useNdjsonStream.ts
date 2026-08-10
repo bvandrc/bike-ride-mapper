@@ -40,7 +40,7 @@ async function ndjsonStream<T>({
     if (batch.length >= batchSize) {
       onBatch?.(batch)
       batch = []
-      // Yield to the event loop, not just the microtask queue, so React paints.
+      // Yield so React can paint
       await new Promise((resolve) => {
         setTimeout(resolve)
       })

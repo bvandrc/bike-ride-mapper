@@ -15,10 +15,7 @@ export default defineConfig(({ mode }) => {
   return {
     base: '/bike-ride-mapper/',
     define: {
-      'process.env': JSON.stringify({
-        NODE_ENV: mode === 'production' ? 'production' : 'development',
-        ...pick(env, CLIENT_ENV_KEYS),
-      }),
+      'process.env': JSON.stringify(pick(env, CLIENT_ENV_KEYS)),
     },
     plugins: [tailwindcss(), react()],
     build: {
