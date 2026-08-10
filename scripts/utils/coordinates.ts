@@ -1,15 +1,7 @@
 import { distance } from '@turf/distance'
 import type { Position } from 'geojson'
 
-/** GeoJSON coordinate order: `[longitude, latitude]`. */
-export type Point = Position
-
-/** Great-circle distance, in feet. */
-export function getDistanceFeet(from: Point, to: Point): number {
-  return distance(from, to, { units: 'feet' })
-}
-
-export function getMaxDistanceFeet(points: Point[]) {
+export function getMaxDistanceFeet(points: Position[]) {
   if (points.length < 2) {
     throw new Error('Not enough points')
   }
@@ -18,7 +10,7 @@ export function getMaxDistanceFeet(points: Point[]) {
   let maxDistanceIndex = -1
 
   for (let i = 1; i < points.length; i++) {
-    const distanceFeet = getDistanceFeet(points[i - 1], points[i])
+    const distanceFeet = distance(points[i - 1], points[i], { units: 'feet' })
     if (distanceFeet > maxDistance) {
       maxDistance = distanceFeet
       maxDistanceIndex = i
@@ -29,7 +21,7 @@ export function getMaxDistanceFeet(points: Point[]) {
 }
 
 export function validatePointsDistance(
-  points: Point[],
+  points: Position[],
   {
     maxRouteDistanceFt,
     maxStartEndDistanceFt,
@@ -39,7 +31,7 @@ export function validatePointsDistance(
   if (!lastPoint) {
     throw new Error('No points provided')
   }
-  const startEndDistanceFt = getDistanceFeet(points[0], lastPoint)
+  const startEndDistanceFt = distance(points[0], lastPoint, { units: 'feet' })
   if (startEndDistanceFt > maxStartEndDistanceFt) {
     throw new Error(
       `Start and End points are ${startEndDistanceFt.toFixed(0)} feet apart, exceeding limit of ${maxStartEndDistanceFt}.`,

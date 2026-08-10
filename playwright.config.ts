@@ -30,7 +30,7 @@ export default defineConfig({
   outputDir: `${RESULTS_FOLDER}/artifacts`,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  retries: 0,
   reporter: [
     ['list', { printSteps: true }],
     [
