@@ -9,13 +9,13 @@
     "bike mapper",
     "cycling"
   ],
-  "homepage": "TODO.com",
+  "homepage": "https://bvandrc.github.io/bike-ride-mapper/",
   "bugs": {
-    "url": "https://github.com/bvandrc/TODO/issues"
+    "url": "https://github.com/bvandrc/bike-ride-mapper/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bvandrc/TODO"
+    "url": "git+https://github.com/bvandrc/bike-ride-mapper.git"
   },
   "author": "Blake Vandercar",
   "license": "ISC",
@@ -32,7 +32,7 @@
     "preview:ci": "vite preview --strictPort",
     "__c1": "====================[ Linting & Type Checking ]==================",
     "check": "pnpm format && pnpm ts:check && pnpm pw:ts:check",
-    "format": "npx biome check . --fix",
+    "format": "biome check . --fix",
     "ts:check": "tsc",
     "pw:ts:check": "tsc --project playwright/tsconfig.json",
     "__c2": "====================[ Playwright Testing ]=======================",
@@ -44,12 +44,11 @@
     "pw:open": "playwright test --ui",
     "pw:report": "playwright show-report playwright/results/html",
     "__c3": "====================[ Misc ]=====================================",
-    "get-data": "npx tsx ./scripts/get-workouts.ts",
-    "get-mmr-token": "npx tsx ./scripts/get-mmr-token.ts",
-    "build:workouts": "npx tsx ./scripts/build-workouts-ndjson.ts"
+    "get-data": "tsx ./scripts/get-workouts.ts",
+    "get-mmr-token": "tsx ./scripts/get-mmr-token.ts",
+    "build:workouts": "tsx ./scripts/build-workouts-ndjson.ts"
   },
   "dependencies": {
-    "classnames": "^2",
     "es-toolkit": "^1",
     "leaflet": "^1",
     "leaflet-polylinedecorator": "^1",
@@ -65,6 +64,7 @@
     "@playwright/test": "^1",
     "@tailwindcss/vite": "^4",
     "@tmcw/togeojson": "^7",
+    "@turf/distance": "^7",
     "@turf/simplify": "^7",
     "@types/geojson": "^7946.0.16",
     "@types/leaflet": "^1.9",
@@ -73,8 +73,8 @@
     "@types/node": "^24",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "@types/xmldom": "^0.1",
     "@vitejs/plugin-react": "^6",
+    "@xmldom/xmldom": "^0.9",
     "axe-core": "^4",
     "dotenv": "^16",
     "lighthouse": "^13",
@@ -83,7 +83,6 @@
     "tsx": "^4",
     "type-fest": "^5",
     "typescript": "^7",
-    "vite": "^8",
-    "xmldom": "^0.6"
+    "vite": "^8"
   }
 }

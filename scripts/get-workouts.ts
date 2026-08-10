@@ -1,8 +1,8 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { gpx as gpxToGeoJson } from '@tmcw/togeojson'
+import { DOMParser } from '@xmldom/xmldom'
 import type { LineString } from 'geojson'
 import { DateTime } from 'luxon'
-import { DOMParser } from 'xmldom'
 
 import type { CustomWorkout } from '../src/types'
 import {
@@ -11,7 +11,6 @@ import {
   type Route,
 } from '../src/types/mapMyRide'
 import { MapMyRideClient } from './api/map-my-ride.api'
-import type { Point } from './utils/coordinates'
 import { validatePointsDistance } from './utils/coordinates'
 import { simplifyGeoJson } from './utils/geoJson'
 import { getEnv } from './utils/get-env'
@@ -41,7 +40,7 @@ await Promise.all(
         throw new Error(`unexpected activity name ${activityType.name}`)
 
       const gpxText = await mapMyRideClient.getRoutePathData(route, 'gpx')
-      const gpxDoc = new DOMParser().parseFromString(gpxText)
+      const gpxDoc = new DOMParser().parseFromString(gpxText, 'text/xml')
       const geoJson = gpxToGeoJson(gpxDoc)
 
       const id = `workout-${workoutDate.toFormat('yyyy-LL-dd-HH-mm-ss')}`
@@ -64,7 +63,7 @@ await Promise.all(
         existingWorkout?.pathHasIssue
       ) {
         const pathPoints = (geoJson.features[0].geometry as LineString)
-          .coordinates as Point[]
+          .coordinates
         try {
           validatePointsDistance(pathPoints, {
             maxRouteDistanceFt: 500,
@@ -106,8 +105,12 @@ await Promise.all(
   }),
 )
 
+const pointsRemoved = totalNumPointsUnsimplified - totalNumPointsSimplified
+const percentRemoved = totalNumPointsUnsimplified
+  ? (pointsRemoved / totalNumPointsUnsimplified) * 100
+  : 0
 console.log(
-  `GeoJsons simplified by ${totalNumPointsUnsimplified - totalNumPointsSimplified} data points (${(((totalNumPointsSimplified - totalNumPointsUnsimplified) / totalNumPointsUnsimplified) * 100).toFixed(0)}%)`,
+  `GeoJsons simplified by ${pointsRemoved} data points (${percentRemoved.toFixed(0)}%)`,
 )
 
 if (errored) {

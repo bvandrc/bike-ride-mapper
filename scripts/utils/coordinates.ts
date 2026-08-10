@@ -1,23 +1,7 @@
-const FEET_PER_DEGREE_LAT = 364_000 // ~69 miles × 5280 ft/mile
-const FEET_PER_DEGREE_LON_AT_EQUATOR = 365_000 // Approx
+import { distance } from '@turf/distance'
+import type { Position } from 'geojson'
 
-export type Point = [number, number]
-
-/** FLAT distance */
-export function getDistanceFeet(
-  [lat1, lon1]: Point,
-  [lat2, lon2]: Point,
-): number {
-  const avgLat = (lat1 + lat2) / 2
-  const latFeet = (lat2 - lat1) * FEET_PER_DEGREE_LAT
-  const lonFeet =
-    (lon2 - lon1) *
-    FEET_PER_DEGREE_LON_AT_EQUATOR *
-    Math.cos((avgLat * Math.PI) / 180)
-  return Math.sqrt(latFeet ** 2 + lonFeet ** 2)
-}
-
-export function getMaxDistanceFeet(points: Point[]) {
+export function getMaxDistanceFeet(points: Position[]) {
   if (points.length < 2) {
     throw new Error('Not enough points')
   }
@@ -26,10 +10,7 @@ export function getMaxDistanceFeet(points: Point[]) {
   let maxDistanceIndex = -1
 
   for (let i = 1; i < points.length; i++) {
-    const prev = points[i - 1]
-    const curr = points[i]
-
-    const distanceFeet = getDistanceFeet(prev, curr)
+    const distanceFeet = distance(points[i - 1], points[i], { units: 'feet' })
     if (distanceFeet > maxDistance) {
       maxDistance = distanceFeet
       maxDistanceIndex = i
@@ -40,7 +21,7 @@ export function getMaxDistanceFeet(points: Point[]) {
 }
 
 export function validatePointsDistance(
-  points: Point[],
+  points: Position[],
   {
     maxRouteDistanceFt,
     maxStartEndDistanceFt,
@@ -50,7 +31,7 @@ export function validatePointsDistance(
   if (!lastPoint) {
     throw new Error('No points provided')
   }
-  const startEndDistanceFt = getDistanceFeet(points[0], lastPoint)
+  const startEndDistanceFt = distance(points[0], lastPoint, { units: 'feet' })
   if (startEndDistanceFt > maxStartEndDistanceFt) {
     throw new Error(
       `Start and End points are ${startEndDistanceFt.toFixed(0)} feet apart, exceeding limit of ${maxStartEndDistanceFt}.`,

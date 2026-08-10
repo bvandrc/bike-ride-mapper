@@ -178,7 +178,7 @@ export const App = () => {
             </LayersControl.BaseLayer>
             <LayersControl.Overlay name="Bike Trails">
               <TileLayer
-                url={'http://{s}.google.com/vt/lyrs=bike&x={x}&y={y}&z={z}'}
+                url={'https://{s}.google.com/vt/lyrs=bike&x={x}&y={y}&z={z}'}
                 subdomains={['mt0', 'mt1', 'mt2', 'mt3']}
                 opacity={0.5}
                 maxZoom={20}

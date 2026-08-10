@@ -1,12 +1,9 @@
 import readNDJSONStream from 'ndjson-readablestream'
 import { useEffect, useState } from 'react'
-
-export interface NdJsonMeta {
-  _meta?: { total: number }
-}
+import type { NdJsonMeta } from '../types'
 
 const isMetaRow = (row: unknown): row is NdJsonMeta =>
-  (row as NdJsonMeta)._meta?.total != null
+  (row as NdJsonMeta)?._meta?.total != null
 
 async function ndjsonStream<T>({
   filepath,
