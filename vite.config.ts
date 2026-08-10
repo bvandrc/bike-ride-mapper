@@ -4,8 +4,8 @@ import { pick } from 'es-toolkit'
 import { defineConfig, loadEnv } from 'vite'
 
 /**
- * The only build-time variables inlined into the client bundle. Everything
- * else in the build environment (MMR tokens, CI secrets) stays out of it.
+ * We have other env vars for getting data in GH workflows, but those
+ * should be excluded from client bundle.
  */
 const CLIENT_ENV_KEYS = ['MAPTILER_API_KEY'] as const
 
