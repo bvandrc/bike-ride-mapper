@@ -1,6 +1,6 @@
 /**
  * Builds a single NDJSON file from the workouts folder for static hosting.
- * Run from project root: npx tsx src/scripts/build-workouts-ndjson.ts
+ * Run from project root: pnpm build:workouts
  * Output: public/workouts.ndjson (first line = _meta with total, then one workout per line)
  */
 import fs from 'node:fs'
