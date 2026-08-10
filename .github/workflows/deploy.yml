@@ -1,10 +1,10 @@
 name: Build & Deploy
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+    branches: [main]
 
 permissions:
   contents: read
@@ -15,24 +15,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  lint:
-    name: Lint & Type Check
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v7
-
-      - name: Setup
-        uses: ./.github/actions/setup
-
-      - name: Lint & Type Check
-        run: pnpm run check
-
   build:
     name: Build
-    needs: lint
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
 
     steps:
       - name: Checkout repo
@@ -55,7 +41,6 @@ jobs:
     name: Deploy
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
 
     permissions:
       pages: write # to publish to GitHub Pages
