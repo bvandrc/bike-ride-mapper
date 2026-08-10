@@ -65,14 +65,15 @@ const useHoveredRouteStore = () => {
   return store
 }
 
-/** Re-renders only the routes whose hover state changed, not every route. */
-export const useIsRouteHovered = (id: string) => {
+/**
+ * Hover state for one route. Only the routes whose state changed re-render,
+ * and the setter is stable, so hover handlers never need re-binding.
+ */
+export const useHoveredRoute = (id: string) => {
   const store = useHoveredRouteStore()
-  return useSyncExternalStore(
+  const isHovered = useSyncExternalStore(
     useCallback((onChange) => store.subscribe(id, onChange), [store, id]),
     useCallback(() => store.getIsHovered(id), [store, id]),
   )
+  return { isHovered, setHoveredRouteId: store.setHoveredRouteId }
 }
-
-/** Stable across renders, so hover handlers never need re-binding. */
-export const useSetHoveredRoute = () => useHoveredRouteStore().setHoveredRouteId

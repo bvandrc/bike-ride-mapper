@@ -11,7 +11,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { GeoJSON, type GeoJSONProps, Tooltip, useMap } from 'react-leaflet'
 import { METERS_TO_FEET, METERS_TO_MILES } from '../constants'
 import type { Route as RouteType } from '../types/mapMyRide'
-import { useIsRouteHovered, useSetHoveredRoute } from './HoveredRouteProvider'
+import { useHoveredRoute } from './HoveredRouteProvider'
 
 /** Invisible wide line that widens the pointer target for the thin route. */
 const HOVER_TARGET_STYLE: PathOptions = { weight: 30, opacity: 0 }
@@ -36,8 +36,7 @@ export const Route = ({
   hoverColor,
 }: RouteProps) => {
   const map = useMap()
-  const isHovered = useIsRouteHovered(id)
-  const setHoveredRouteId = useSetHoveredRoute()
+  const { isHovered, setHoveredRouteId } = useHoveredRoute(id)
   const lineRef = useRef<GeoJSONType>(null)
   const hoverLineRef = useRef<GeoJSONType>(null)
 
