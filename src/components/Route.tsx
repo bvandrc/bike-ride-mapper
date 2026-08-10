@@ -4,15 +4,20 @@ import {
   Symbol as LeafletSymbol,
   type PathOptions,
   type Polyline,
-  type PolylineDecorator,
   polylineDecorator,
 } from 'leaflet'
 import type { DateTime } from 'luxon'
-import { useCallback, useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { GeoJSON, type GeoJSONProps, Tooltip, useMap } from 'react-leaflet'
 import { METERS_TO_FEET, METERS_TO_MILES } from '../constants'
 import type { Route as RouteType } from '../types/mapMyRide'
 import { useHoveredRoute } from './HoveredRouteProvider'
+
+/** Invisible wide line that widens the pointer target for the thin route. */
+const HOVER_TARGET_STYLE: PathOptions = { weight: 30, opacity: 0 }
+
+const isPathFeature: GeoJSONProps['filter'] = (feature) =>
+  feature.geometry.type !== 'Point'
 
 export interface RouteProps extends Pick<GeoJSONProps, 'data'> {
   id: string
@@ -31,97 +36,83 @@ export const Route = ({
   hoverColor,
 }: RouteProps) => {
   const map = useMap()
-  const { hoveredRouteId, setHoveredRouteId } = useHoveredRoute()
-  const isHovered = hoveredRouteId === id
+  const { isHovered, setHoveredRouteId } = useHoveredRoute(id)
   const lineRef = useRef<GeoJSONType>(null)
   const hoverLineRef = useRef<GeoJSONType>(null)
-  const arrowsDecorator = useRef<PolylineDecorator>()
 
-  const style: PathOptions = isHovered
-    ? {
-        color: hoverColor,
-        weight: 5,
-        opacity: 0.6,
-      }
-    : {
-        color,
-        weight: 3,
-        opacity: 0.45,
-      }
+  const style = useMemo<PathOptions>(
+    () =>
+      isHovered
+        ? { color: hoverColor, weight: 5, opacity: 0.6 }
+        : { color, weight: 3, opacity: 0.45 },
+    [isHovered, color, hoverColor],
+  )
 
-  const arrow = LeafletSymbol.arrowHead({
-    pixelSize: 13,
-    pathOptions: {
-      fillOpacity: style.opacity,
-      color: style.color,
-      weight: 0,
-    },
-  })
+  const eventHandlers = useMemo(
+    () => ({
+      mouseover: () => setHoveredRouteId(id),
+      mouseout: () => setHoveredRouteId(null),
+    }),
+    [setHoveredRouteId, id],
+  )
 
-  const addArrows = useCallback(() => {
+  // Direction arrows only exist while hovered; no react-leaflet component
+  // covers the decorator, so it's added and torn down imperatively.
+  useEffect(() => {
+    if (!isHovered) return
+
     const lineLayer = lineRef.current?.getLayers()[0]
     if (!lineLayer) return
-    arrowsDecorator.current = polylineDecorator(lineLayer as Polyline, {
-      patterns: [{ repeat: 60, symbol: arrow }],
+
+    const decorator = polylineDecorator(lineLayer as Polyline, {
+      patterns: [
+        {
+          repeat: 60,
+          symbol: LeafletSymbol.arrowHead({
+            pixelSize: 13,
+            pathOptions: {
+              fillOpacity: style.opacity,
+              color: style.color,
+              weight: 0,
+            },
+          }),
+        },
+      ],
     }).addTo(map)
-  }, [map, arrow])
 
-  const removeArrows = useCallback(() => {
-    arrowsDecorator.current?.remove()
-    arrowsDecorator.current = undefined
-  }, [])
+    lineRef.current?.bringToFront()
+    hoverLineRef.current?.bringToFront()
 
-  useEffect(() => {
-    if (isHovered) {
-      addArrows()
-      lineRef.current?.bringToFront()
-      hoverLineRef.current?.bringToFront()
-    } else {
-      removeArrows()
-    }
     return () => {
-      removeArrows()
+      decorator.remove()
     }
-  }, [isHovered, addArrows, removeArrows])
-
-  const handleMouseOver = () => setHoveredRouteId(id)
-  const handleMouseOut = () => setHoveredRouteId(null)
+  }, [isHovered, map, style])
 
   return (
     <>
-      <GeoJSON
-        ref={lineRef}
-        data={data}
-        style={style}
-        filter={(feature) => feature.geometry.type !== 'Point'}
-      />
+      <GeoJSON ref={lineRef} data={data} style={style} filter={isPathFeature} />
       <GeoJSON
         ref={hoverLineRef}
         data={data}
-        style={{ weight: 30, opacity: 0 }}
-        filter={(feature) => feature.geometry.type !== 'Point'}
-        eventHandlers={{
-          mouseover: handleMouseOver,
-          mouseout: handleMouseOut,
-        }}
+        style={HOVER_TARGET_STYLE}
+        filter={isPathFeature}
+        eventHandlers={eventHandlers}
       >
-        {isHovered && (
-          <Tooltip
-            className="text-xs m-0 px-2 py-0"
-            direction="top"
-            sticky={true}
-          >
-            <b>{date.toFormat('EEE. MMMM d, yyyy h:mma')}</b>
-            <br />
-            <i>
-              <b>Distance: {round(route.distance * METERS_TO_MILES, 1)}mi</b>
-            </i>
-            <br />
-            <i>
-              Total Ascent: {round(route.total_ascent * METERS_TO_FEET, 0)}ft
-            </i>
-          </Tooltip>
-        )}
+        {/* Bound unconditionally: Leaflet opens a tooltip from the `mouseover`
+            it was already bound for, so mounting this on hover is too late. */}
+        <Tooltip
+          className="text-xs m-0 px-2 py-0"
+          direction="top"
+          sticky={true}
+        >
+          <b>{date.toFormat('EEE. MMMM d, yyyy h:mma')}</b>
+          <br />
+          <i>
+            <b>Distance: {round(route.distance * METERS_TO_MILES, 1)}mi</b>
+          </i>
+          <br />
+          <i>Total Ascent: {round(route.total_ascent * METERS_TO_FEET, 0)}ft</i>
+        </Tooltip>
       </GeoJSON>
     </>
   )

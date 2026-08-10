@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { gpx as gpxToGeoJson } from '@tmcw/togeojson'
 import { DOMParser } from '@xmldom/xmldom'
+import { mapAsync } from 'es-toolkit'
 import type { LineString } from 'geojson'
 import { DateTime } from 'luxon'
 
@@ -15,6 +16,9 @@ import { validatePointsDistance } from './utils/coordinates'
 import { simplifyGeoJson } from './utils/geoJson'
 import { getEnv } from './utils/get-env'
 
+/** Keeps the per-workout fan-out from flooding the MapMyRide API. */
+const REQUEST_CONCURRENCY = 8
+
 const { MMR_USER_ID } = getEnv('MMR_USER_ID')
 
 console.log('getting workouts from mapmyride...')
@@ -26,8 +30,9 @@ console.log('converting GPX to GeoJson and writing to files..')
 let errored = false
 let totalNumPointsUnsimplified = 0
 let totalNumPointsSimplified = 0
-await Promise.all(
-  workouts.map(async (workout) => {
+await mapAsync(
+  workouts,
+  async (workout) => {
     const workoutDate = DateTime.fromISO(workout.start_datetime, {
       zone: 'America/Denver',
     })
@@ -102,7 +107,8 @@ await Promise.all(
         console.error('An unknown error occurred:', error)
       }
     }
-  }),
+  },
+  { concurrency: REQUEST_CONCURRENCY },
 )
 
 const pointsRemoved = totalNumPointsUnsimplified - totalNumPointsSimplified

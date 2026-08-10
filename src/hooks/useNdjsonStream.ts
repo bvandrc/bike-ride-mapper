@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import type { NdJsonMeta } from '../types'
 
 const isMetaRow = (row: unknown): row is NdJsonMeta =>
-  (row as NdJsonMeta)?._meta?.total != null
+  (row as NdJsonMeta | null)?._meta?.total != null
 
 async function ndjsonStream<T>({
   filepath,
@@ -40,8 +40,10 @@ async function ndjsonStream<T>({
     if (batch.length >= batchSize) {
       onBatch?.(batch)
       batch = []
-      // yield so React can paint (optional but helps)
-      await Promise.resolve()
+      // Yield so React can paint
+      await new Promise((resolve) => {
+        setTimeout(resolve)
+      })
     }
   }
 

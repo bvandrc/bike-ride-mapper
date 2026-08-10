@@ -34,7 +34,7 @@ const MapHandlers = ({ ...handlers }: LeafletEventHandlerFnMap) => {
 
 const HeaderSubtitle = ({ data }: { data: CustomWorkout[] | null }) => {
   if (data === null) {
-    return
+    return null
   }
   if (data.length === 0) {
     return <b className="text-red-500">No data! Select layers!</b>
