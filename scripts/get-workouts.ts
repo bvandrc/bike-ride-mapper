@@ -10,10 +10,10 @@ import {
   ActivityName,
   type ActivityType,
   type Route,
-} from '../src/types/mapMyRide'
+} from '../src/types/map-my-ride'
 import { MapMyRideClient } from './api/map-my-ride.api'
 import { validatePointsDistance } from './utils/coordinates'
-import { simplifyGeoJson } from './utils/geoJson'
+import { simplifyGeoJson } from './utils/geo-json'
 import { getEnv } from './utils/get-env'
 
 /** Keeps the per-workout fan-out from flooding the MapMyRide API. */

@@ -3,7 +3,7 @@ import type {
   OAuthResponse,
   Route,
   Workout,
-} from '../../src/types/mapMyRide'
+} from '../../src/types/map-my-ride'
 import { getEnv } from '../../src/utils/get-env'
 import { getInput } from '../utils/get-input'
 
