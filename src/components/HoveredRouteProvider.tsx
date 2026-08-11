@@ -14,7 +14,7 @@ interface HoveredRouteStore {
 }
 
 const HoveredRouteContext = createContext<HoveredRouteStore | undefined>(
-  undefined,
+  undefined
 )
 
 export const HoveredRouteProvider = ({
@@ -48,7 +48,7 @@ export const HoveredRouteProvider = ({
         }
       },
     }),
-    [],
+    []
   )
 
   return (
@@ -73,7 +73,7 @@ export const useHoveredRoute = (id: string) => {
   const store = useHoveredRouteStore()
   const isHovered = useSyncExternalStore(
     useCallback((onChange) => store.subscribe(id, onChange), [store, id]),
-    useCallback(() => store.getIsHovered(id), [store, id]),
+    useCallback(() => store.getIsHovered(id), [store, id])
   )
   return { isHovered, setHoveredRouteId: store.setHoveredRouteId }
 }

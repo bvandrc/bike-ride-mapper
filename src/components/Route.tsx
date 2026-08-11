@@ -45,7 +45,7 @@ export const Route = ({
       isHovered
         ? { color: hoverColor, weight: 5, opacity: 0.6 }
         : { color, weight: 3, opacity: 0.45 },
-    [isHovered, color, hoverColor],
+    [isHovered, color, hoverColor]
   )
 
   const eventHandlers = useMemo(
@@ -53,7 +53,7 @@ export const Route = ({
       mouseover: () => setHoveredRouteId(id),
       mouseout: () => setHoveredRouteId(null),
     }),
-    [setHoveredRouteId, id],
+    [setHoveredRouteId, id]
   )
 
   // Direction arrows only exist while hovered; no react-leaflet component
@@ -96,15 +96,13 @@ export const Route = ({
         data={data}
         style={HOVER_TARGET_STYLE}
         filter={isPathFeature}
-        eventHandlers={eventHandlers}
-      >
+        eventHandlers={eventHandlers}>
         {/* Bound unconditionally: Leaflet opens a tooltip from the `mouseover`
             it was already bound for, so mounting this on hover is too late. */}
         <Tooltip
           className="text-xs m-0 px-2 py-0"
           direction="top"
-          sticky={true}
-        >
+          sticky={true}>
           <b>{date.toFormat('EEE. MMMM d, yyyy h:mma')}</b>
           <br />
           <i>

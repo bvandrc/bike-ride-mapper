@@ -76,8 +76,8 @@ export const App = () => {
               name: 'Bike Records',
               data: allWorkouts.filter((g) =>
                 [ActivityName.BIKE_RIDE, ActivityName.ROAD_CYCLING].includes(
-                  g.activityType.name,
-                ),
+                  g.activityType.name
+                )
               ),
               layerRef: bikeLayerRef,
             },
@@ -85,13 +85,13 @@ export const App = () => {
               name: 'Walk Records',
               data: allWorkouts.filter((g) =>
                 [ActivityName.RUN, ActivityName.WALK].includes(
-                  g.activityType.name,
-                ),
+                  g.activityType.name
+                )
               ),
               layerRef: walkLayerRef,
             },
           ],
-    [allWorkouts],
+    [allWorkouts]
   )
 
   const changeVisibleData = useCallback(() => {
@@ -101,9 +101,9 @@ export const App = () => {
       layerData
         .filter(
           ({ layerRef }) =>
-            layerRef.current && mapRefMap.hasLayer(layerRef.current),
+            layerRef.current && mapRefMap.hasLayer(layerRef.current)
         )
-        .flatMap(({ data }) => data),
+        .flatMap(({ data }) => data)
     )
   }, [layerData])
 
@@ -126,8 +126,7 @@ export const App = () => {
     <div className="relative h-full">
       <header
         className="absolute inset-x-0 top-0 z-[2] pointer-events-none text-center max-sm:text-right"
-        data-testid="header"
-      >
+        data-testid="header">
         <div className="inline-block m-2 px-3 bg-black/40 shadow-panel rounded-lg max-sm:text-center max-sm:shadow-none">
           <h1 className="inline-block m-0.5 text-3xl font-bold text-[yellow] purple-shadow-bold max-sm:text-2xl">
             My Bike Rides
@@ -138,8 +137,7 @@ export const App = () => {
             {isLoading && (
               <div
                 className="text-lg text-yellow-300"
-                data-testid="header-loading"
-              >
+                data-testid="header-loading">
                 Loading Routes... ({allWorkouts.length}/{total})
               </div>
             )}
@@ -153,8 +151,7 @@ export const App = () => {
           zoomControl={false}
           id="map"
           className="size-full"
-          ref={mapRef}
-        >
+          ref={mapRef}>
           <MapHandlers
             baselayerchange={(e) => {
               setIsSatellite(e.name === 'Satellite')

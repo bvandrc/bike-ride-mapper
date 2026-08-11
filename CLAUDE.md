@@ -57,12 +57,6 @@ https://github.com/bvandrc/bvandrc-conventions — follow all of them:
   `src/styles/index.css` as `@utility` blocks (`shadow-panel`,
   `text-shadow-black`); prefer those over repeating raw CSS in `className`.
 - **Environment variables**: Read them through `getEnv()` (`src/utils/get-env.ts` in the app, `scripts/utils/get-env.ts` in scripts), never bare `process.env` — it throws on a missing or empty value instead of failing later. Vite injects them via `define`, so app code sees only what's in the environment at build time.
-- **Linting and formatting**: Biome is the linter *and* formatter — no
-  eslint/prettier here. Style is single quotes, no semicolons, 2-space indent,
-  80 columns — don't hand-format. Notable rules that are errors:
-  `noFloatingPromises`,
-  `noImportCycles`, `noShadow`, `noUndeclaredDependencies`, `noTsIgnore`,
-  `useNumericSeparators` (`39.732_725_8`) — fix the cause, don't suppress.
 - **Accessibility tests**: `color-contrast` is disabled globally because the
   header sits on a translucent panel over map tiles.
 - **Convention files**: `conventions/` is synced from

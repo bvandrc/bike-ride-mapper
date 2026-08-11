@@ -63,7 +63,7 @@ await mapAsync(
       if (
         (!existingWorkout &&
           ![route.description, workout.notes].some((note) =>
-            note?.includes('GOOD'),
+            note?.includes('GOOD')
           )) ||
         existingWorkout?.pathHasIssue
       ) {
@@ -98,7 +98,7 @@ await mapAsync(
       writeFileSync(filePath, JSON.stringify(newData, null, 2))
     } catch (error) {
       console.error(
-        `Error for workout: ${workout.name} (${workoutDate.toFormat('yyyy-LL-dd')})`,
+        `Error for workout: ${workout.name} (${workoutDate.toFormat('yyyy-LL-dd')})`
       )
       errored = true
       if (error instanceof Error) {
@@ -108,7 +108,7 @@ await mapAsync(
       }
     }
   },
-  { concurrency: REQUEST_CONCURRENCY },
+  { concurrency: REQUEST_CONCURRENCY }
 )
 
 const pointsRemoved = totalNumPointsUnsimplified - totalNumPointsSimplified
@@ -116,7 +116,7 @@ const percentRemoved = totalNumPointsUnsimplified
   ? (pointsRemoved / totalNumPointsUnsimplified) * 100
   : 0
 console.log(
-  `GeoJsons simplified by ${pointsRemoved} data points (${percentRemoved.toFixed(0)}%)`,
+  `GeoJsons simplified by ${pointsRemoved} data points (${percentRemoved.toFixed(0)}%)`
 )
 
 if (errored) {

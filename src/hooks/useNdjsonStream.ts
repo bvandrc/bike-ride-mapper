@@ -21,7 +21,7 @@ async function ndjsonStream<T>({
   const response = await fetch(filepath, { signal })
   if (!response.ok)
     throw new Error(
-      `Failed to load data: ${response.status} ${response.statusText}`,
+      `Failed to load data: ${response.status} ${response.statusText}`
     )
   if (!response.body) throw new Error('No response body')
 
@@ -56,7 +56,7 @@ export function useNdjsonStream<T>(
     batchSize = 50,
   }: {
     batchSize?: number
-  } = {},
+  } = {}
 ) {
   const [data, setData] = useState<T[]>([])
   const [total, setTotal] = useState<number | null>(null)

@@ -25,7 +25,7 @@ export function validatePointsDistance(
   {
     maxRouteDistanceFt,
     maxStartEndDistanceFt,
-  }: { maxRouteDistanceFt: number; maxStartEndDistanceFt: number },
+  }: { maxRouteDistanceFt: number; maxStartEndDistanceFt: number }
 ) {
   const lastPoint = points.at(-1)
   if (!lastPoint) {
@@ -34,14 +34,14 @@ export function validatePointsDistance(
   const startEndDistanceFt = distance(points[0], lastPoint, { units: 'feet' })
   if (startEndDistanceFt > maxStartEndDistanceFt) {
     throw new Error(
-      `Start and End points are ${startEndDistanceFt.toFixed(0)} feet apart, exceeding limit of ${maxStartEndDistanceFt}.`,
+      `Start and End points are ${startEndDistanceFt.toFixed(0)} feet apart, exceeding limit of ${maxStartEndDistanceFt}.`
     )
   }
 
   const { maxDistance, maxDistanceIndex } = getMaxDistanceFeet(points)
   if (maxDistance > maxRouteDistanceFt) {
     throw new Error(
-      `Points ${maxDistanceIndex - 1} and ${maxDistanceIndex} (out of ${points.length}) are ${maxDistance.toFixed(0)} feet apart, exceeding limit of ${maxRouteDistanceFt}.`,
+      `Points ${maxDistanceIndex - 1} and ${maxDistanceIndex} (out of ${points.length}) are ${maxDistance.toFixed(0)} feet apart, exceeding limit of ${maxRouteDistanceFt}.`
     )
   }
 }
