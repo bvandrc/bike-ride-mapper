@@ -3,7 +3,7 @@ import type { FeatureCollection, LineString } from 'geojson'
 
 export function simplifyGeoJson(
   geoJson: FeatureCollection,
-  options: Parameters<typeof simplifyGeoJson_>[1],
+  options: Parameters<typeof simplifyGeoJson_>[1]
 ) {
   const geoJsonSimplified = simplifyGeoJson_(geoJson, options)
 

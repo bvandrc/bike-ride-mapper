@@ -7,6 +7,6 @@ export function getEnv<Keys extends string[]>(...keys: Keys) {
         throw new Error(`Missing required environment variable: ${key}`)
       }
       return [key, value]
-    }),
+    })
   ) as Record<Keys[number], string>
 }

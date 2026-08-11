@@ -7,14 +7,14 @@ function formatViolations(violations: Result[]): string {
     .map(
       (v) =>
         `\n[${v.impact}] ${v.id}: ${v.help}\n  ${v.helpUrl}\n` +
-        v.nodes.map((n) => `  - ${n.target.join(' ')}`).join('\n'),
+        v.nodes.map((n) => `  - ${n.target.join(' ')}`).join('\n')
     )
     .join('\n')
 }
 
 export async function checkA11y(
   page: Page,
-  options: { disableRules?: string[] } = {},
+  options: { disableRules?: string[] } = {}
 ) {
   const builder = new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'])

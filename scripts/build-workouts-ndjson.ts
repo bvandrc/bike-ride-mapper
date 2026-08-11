@@ -37,7 +37,7 @@ function build() {
     if (data.pathHasIssue === true) continue
     if (
       [data.geoJson, data.workout, data.route, data.activityType].some(
-        (field) => !field,
+        (field) => !field
       )
     ) {
       console.warn(`Skipping ${file}: missing required fields`)

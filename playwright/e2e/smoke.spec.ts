@@ -6,7 +6,7 @@ test('home page loads', async ({ page }) => {
 
   await expect(page).toHaveTitle('My Bike Ride Map')
   await expect(
-    page.getByRole('heading', { name: 'My Bike Rides' }),
+    page.getByRole('heading', { name: 'My Bike Rides' })
   ).toBeVisible()
   await expect(page.getByText('Bike Records')).toBeVisible()
 

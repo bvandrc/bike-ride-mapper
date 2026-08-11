@@ -6,6 +6,10 @@ conventions live in their own files alongside this one and build on it.
 - **File naming**: kebab-case for utils and plain modules (`auth-utils.ts`).
 - **Exports**: Named exports. No default exports, unless something requires
   one.
+- **Linting and formatting**: Biome is the linter *and* formatter — no
+  eslint/prettier here. Shared rules live in `./biome.base.json`, which the
+  repo's own `biome.json` extends; keep repo-specific settings in that
+  `biome.json` rather than editing the synced base.
 - **Type-only imports**: Use `import type` for imports only used as types.
 - **Constant objects**: UPPER_CASE for names, UPPER_CASE for keys that name
   entries (namespace/enum-style, e.g. `ROUTES.HOME`,

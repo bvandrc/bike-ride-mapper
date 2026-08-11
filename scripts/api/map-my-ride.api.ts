@@ -16,7 +16,7 @@ export class MapMyRideClient {
   constructor() {
     const { MMR_CLIENT_ID, MMR_AUTH_TOKEN } = getEnv(
       'MMR_CLIENT_ID',
-      'MMR_AUTH_TOKEN',
+      'MMR_AUTH_TOKEN'
     )
     this.CLIENT_ID = MMR_CLIENT_ID
     this.apiKeyHeader = { 'Api-Key': MMR_CLIENT_ID }
@@ -27,12 +27,12 @@ export class MapMyRideClient {
     try {
       const response = await fetch(
         `${MapMyRideClient.MMR_API_URL}${endpoint}`,
-        args,
+        args
       )
 
       if (!response.ok) {
         throw new Error(
-          `Failed to get from endpoint ${endpoint}\nStatus: ${response.status} ${response.statusText}\nResponse: ${await response.text()}`,
+          `Failed to get from endpoint ${endpoint}\nStatus: ${response.status} ${response.statusText}\nResponse: ${await response.text()}`
         )
       }
 
@@ -73,7 +73,7 @@ export class MapMyRideClient {
           client_id: this.CLIENT_ID,
           client_secret: MMR_CLIENT_SECRET,
         }),
-      },
+      }
     ).then((r) => r.json())
     return response
   }
@@ -95,7 +95,7 @@ export class MapMyRideClient {
 
     console.log(
       'Enter to environment MMR_AUTH_TOKEN :\n',
-      tokenResponse.access_token,
+      tokenResponse.access_token
     )
     console.log(`Expires in: ${tokenResponse.expires_in / (24 * 60 * 60)} days`)
     process.exit(0)
@@ -104,7 +104,7 @@ export class MapMyRideClient {
   async getAll<T>(
     endpoint: string,
     key: string,
-    params: Record<string, string>,
+    params: Record<string, string>
   ) {
     const getBatch = async (limit: number, offset: number) => {
       const response = await this.get(
@@ -113,7 +113,7 @@ export class MapMyRideClient {
             limit: String(limit),
             offset: String(offset),
             ...params,
-          }),
+          })
       ).then((r) => r.json())
       return response._embedded[key] as T[]
     }
@@ -141,14 +141,14 @@ export class MapMyRideClient {
 
   async getActivityType(workout: Workout): Promise<ActivityType> {
     return await this.get(workout._links.activity_type[0].href).then((r) =>
-      r.json(),
+      r.json()
     )
   }
 
   async getRoutePathData(route: Route, type: 'gpx' | 'kml') {
     return await this.get(
       // biome-ignore lint/style/noNonNullAssertion: always present
-      route._links.alternate.find((l) => l.name === type)!.href,
+      route._links.alternate.find((l) => l.name === type)!.href
     ).then((r) => r.text())
   }
 }
