@@ -8,6 +8,10 @@
   },
   "linter": {
     "rules": {
+      "correctness": {
+        // wish we could use this but it doesn't work with tsconfig path aliases
+        "noUndeclaredDependencies": "off"
+      },
       "suspicious": {
         "noUnknownAtRules": "off"
       }

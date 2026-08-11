@@ -2,7 +2,7 @@ import type { LayerGroup as LayerGroupType } from 'leaflet'
 import { DateTime } from 'luxon'
 import { LayerGroup } from 'react-leaflet'
 
-import type { CustomWorkout } from '../types'
+import type { CustomWorkout } from '@/types'
 import { Route, type RouteProps } from './Route'
 
 export interface RouteLayerProps

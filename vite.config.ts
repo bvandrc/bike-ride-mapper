@@ -18,6 +18,9 @@ export default defineConfig(({ mode }) => {
       'process.env': JSON.stringify(pick(env, CLIENT_ENV_KEYS)),
     },
     plugins: [tailwindcss(), react()],
+    resolve: {
+      tsconfigPaths: true,
+    },
     build: {
       target: 'esnext',
       modulePreload: false,
