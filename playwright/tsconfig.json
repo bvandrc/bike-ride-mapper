@@ -2,11 +2,11 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "types": ["node"],
-    // `paths` replaces rather than merges with the base config's, so `@/*` is
-    // repeated here to keep it working in tests.
     "paths": {
-      "@/*": ["../src/*"],
-      "~/pw/support/*": ["./support/*"]
+      "~/pw/support/*": ["./support/*"],
+      // `paths` replaces rather than merges with the base config's, so `@/*` is
+      // repeated here to keep it working in tests.
+      "@/*": ["../src/*"]
     }
   },
   "include": ["**/*.ts"],
