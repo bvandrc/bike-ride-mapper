@@ -1,6 +1,6 @@
 import type { GeoJsonObject } from 'geojson'
 
-import type { ActivityType, Route, Workout } from './mapMyRide'
+import type { ActivityType, Route, Workout } from './map-my-ride'
 
 export interface CustomWorkout {
   title: string

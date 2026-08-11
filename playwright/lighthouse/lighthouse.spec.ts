@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test'
 import { desktopConfig } from 'lighthouse'
+import { SELECTORS } from '../support/constants/selectors'
 import { lighthouseTest as test } from './fixtures'
 
 test('Home page', async ({ page, runAudit }) => {
@@ -14,7 +15,7 @@ test('Home page', async ({ page, runAudit }) => {
   })
 
   // workout routes can take more than default timeout to load.
-  await expect(page.getByText(/# Routes: \d+/)).toBeVisible({
+  await expect(page.locator(SELECTORS.HEADER.STATS)).toBeVisible({
     timeout: 15_000,
   })
 
