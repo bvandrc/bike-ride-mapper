@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
-import { SELECTORS } from '../support/constants/selectors'
+
+import { SELECTORS } from '~/pw/support/constants/selectors'
 import { checkA11y } from './accessibility'
 
 // One "workflow" test: the page with routes loaded, then with a route

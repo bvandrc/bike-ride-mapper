@@ -1,4 +1,4 @@
-import type { CustomWorkout } from '../types'
+import type { CustomWorkout } from '@/types'
 import { useNdjsonStream } from './useNdjsonStream'
 
 const WORKOUTS_NDJSON_URL = `${import.meta.env.BASE_URL}workouts.ndjson`

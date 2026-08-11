@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useRef } from 'react'
 import { round } from 'es-toolkit'
 import {
   type GeoJSON as GeoJSONType,
@@ -7,10 +8,10 @@ import {
   polylineDecorator,
 } from 'leaflet'
 import type { DateTime } from 'luxon'
-import { useEffect, useMemo, useRef } from 'react'
 import { GeoJSON, type GeoJSONProps, Tooltip, useMap } from 'react-leaflet'
-import { METERS_TO_FEET, METERS_TO_MILES } from '../constants'
-import type { Route as RouteType } from '../types/map-my-ride'
+
+import { METERS_TO_FEET, METERS_TO_MILES } from '@/constants'
+import type { Route as RouteType } from '@/types/map-my-ride'
 import { useHoveredRoute } from './HoveredRouteProvider'
 
 /** Invisible wide line that widens the pointer target for the thin route. */

@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
-import { SELECTORS } from '../support/constants/selectors'
+
+import { SELECTORS } from '~/pw/support/constants/selectors'
 
 test('home page loads', async ({ page }) => {
   await page.goto('/')
