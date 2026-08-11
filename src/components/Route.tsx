@@ -2,7 +2,6 @@ import { round } from 'es-toolkit'
 import {
   type GeoJSON as GeoJSONType,
   Symbol as LeafletSymbol,
-  type Path,
   type PathOptions,
   type Polyline,
   polylineDecorator,
@@ -19,15 +18,6 @@ const HOVER_TARGET_STYLE: PathOptions = { weight: 30, opacity: 0 }
 
 const isPathFeature: GeoJSONProps['filter'] = (feature) =>
   feature.geometry.type !== 'Point'
-
-/** Tags each route's SVG path so tests can locate it; Leaflet builds those
-    elements itself, so the attribute is set once the layer is on the map. */
-const tagRoutePath: GeoJSONProps['onEachFeature'] = (_feature, layer) => {
-  layer.on('add', () => {
-    const element = (layer as Path).getElement()
-    element?.setAttribute('data-testid', 'map-route')
-  })
-}
 
 export interface RouteProps extends Pick<GeoJSONProps, 'data'> {
   id: string
@@ -100,13 +90,7 @@ export const Route = ({
 
   return (
     <>
-      <GeoJSON
-        ref={lineRef}
-        data={data}
-        style={style}
-        filter={isPathFeature}
-        onEachFeature={tagRoutePath}
-      />
+      <GeoJSON ref={lineRef} data={data} style={style} filter={isPathFeature} />
       <GeoJSON
         ref={hoverLineRef}
         data={data}

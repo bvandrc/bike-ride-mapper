@@ -10,6 +10,8 @@ export const SELECTORS = {
   },
   MAP: {
     SELF: testId('map'),
-    ROUTE: testId('map-route'),
+    // Leaflet renders route paths itself, so there's no testid to hang on
+    // them — this is the class it gives every interactive path.
+    ROUTE: '.leaflet-interactive',
   },
 } as const

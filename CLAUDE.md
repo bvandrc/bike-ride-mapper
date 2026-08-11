@@ -47,12 +47,6 @@ https://github.com/bvandrc/bvandrc-conventions — follow all of them:
 ## Conventions
 
 - **Package manager**: pnpm. `npm install` writes a competing `package-lock.json` that CI ignores.
-- **package.json**: Key order is enforced in CI by `bvandrc/lint-package-json`. Adding a field in the wrong place fails the lint job.
-- **Prop types**: Beyond the DOM prop types `conventions/react.md` covers,
-  compose from library components' prop types too. Name the interface
-  `<Component>Props` and export it, so other components can compose from it in
-  turn (see `RouteProps` picking from `GeoJSONProps`, and `RouteLayerProps`
-  picking from `RouteProps`).
 - **Leaflet**: Prefer react-leaflet's declarative components; drop to the
   imperative Leaflet API through `useMap` or a ref only where no component
   exists (see the arrow decorators in `Route.tsx`), and clean up in the effect's
@@ -65,14 +59,15 @@ https://github.com/bvandrc/bvandrc-conventions — follow all of them:
 - **Environment variables**: Read them through `getEnv()` (`src/utils/get-env.ts` in the app, `scripts/utils/get-env.ts` in scripts), never bare `process.env` — it throws on a missing or empty value instead of failing later. Vite injects them via `define`, so app code sees only what's in the environment at build time.
 - **Linting and formatting**: Biome is the linter *and* formatter — no
   eslint/prettier here. Style is single quotes, no semicolons, 2-space indent,
-  80 columns; run `pnpm format` after making edits instead of hand-formatting,
-  and `pnpm check` (format + both type checks) before every commit — it's what
-  CI runs. Notable rules that are errors: `noFloatingPromises`,
+  80 columns — don't hand-format. Run `pnpm check` (format + both type checks)
+  before every commit; it's what CI runs. Notable rules that are errors:
+  `noFloatingPromises`,
   `noImportCycles`, `noShadow`, `noUndeclaredDependencies`, `noTsIgnore`,
   `useNumericSeparators` (`39.732_725_8`) — fix the cause, don't suppress.
-- **Test IDs**: Leaflet builds route paths itself, so `Route.tsx` tags them
-  through `onEachFeature` rather than a JSX `data-testid`; the registry entry
-  is `SELECTORS.MAP.ROUTE` like any other.
+- **Test IDs**: Leaflet renders route paths itself, so they have no
+  `data-testid` to reach for — `SELECTORS.MAP.ROUTE` is the class hook Leaflet
+  puts on them, one of the third-party exceptions
+  `conventions/playwright.md` allows.
 - **Accessibility tests**: `color-contrast` is disabled globally because the
   header sits on a translucent panel over map tiles.
 - **Convention files**: `conventions/` is synced from
