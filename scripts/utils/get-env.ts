@@ -9,4 +9,4 @@ if (typeof window === 'undefined' && typeof process !== 'undefined') {
 }
 
 // biome-ignore lint/performance/noBarrelFile: not a barrel — the re-export is what makes the dotenv load above run before callers get `getEnv`
-export { getEnv } from '../../src/utils/get-env'
+export { getEnv } from '@/utils/get-env'

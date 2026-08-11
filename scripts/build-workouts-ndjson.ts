@@ -6,7 +6,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-import type { CustomWorkout, NdJsonMeta } from '../src/types'
+import type { CustomWorkout, NdJsonMeta } from '@/types'
 
 const WORKOUTS_DIR = path.join(process.cwd(), 'workouts')
 const OUT_DIR = path.join(process.cwd(), 'public')

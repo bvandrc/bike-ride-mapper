@@ -5,12 +5,12 @@ import { mapAsync } from 'es-toolkit'
 import type { LineString } from 'geojson'
 import { DateTime } from 'luxon'
 
-import type { CustomWorkout } from '../src/types'
+import type { CustomWorkout } from '@/types'
 import {
   ActivityName,
   type ActivityType,
   type Route,
-} from '../src/types/map-my-ride'
+} from '@/types/map-my-ride'
 import { MapMyRideClient } from './api/map-my-ride.api'
 import { validatePointsDistance } from './utils/coordinates'
 import { simplifyGeoJson } from './utils/geo-json'
