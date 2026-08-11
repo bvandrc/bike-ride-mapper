@@ -59,15 +59,10 @@ https://github.com/bvandrc/bvandrc-conventions — follow all of them:
 - **Environment variables**: Read them through `getEnv()` (`src/utils/get-env.ts` in the app, `scripts/utils/get-env.ts` in scripts), never bare `process.env` — it throws on a missing or empty value instead of failing later. Vite injects them via `define`, so app code sees only what's in the environment at build time.
 - **Linting and formatting**: Biome is the linter *and* formatter — no
   eslint/prettier here. Style is single quotes, no semicolons, 2-space indent,
-  80 columns — don't hand-format. Run `pnpm check` (format + both type checks)
-  before every commit; it's what CI runs. Notable rules that are errors:
+  80 columns — don't hand-format. Notable rules that are errors:
   `noFloatingPromises`,
   `noImportCycles`, `noShadow`, `noUndeclaredDependencies`, `noTsIgnore`,
   `useNumericSeparators` (`39.732_725_8`) — fix the cause, don't suppress.
-- **Test IDs**: Leaflet renders route paths itself, so they have no
-  `data-testid` to reach for — `SELECTORS.MAP.ROUTE` is the class hook Leaflet
-  puts on them, one of the third-party exceptions
-  `conventions/playwright.md` allows.
 - **Accessibility tests**: `color-contrast` is disabled globally because the
   header sits on a translucent panel over map tiles.
 - **Convention files**: `conventions/` is synced from
