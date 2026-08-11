@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test'
 import { desktopConfig } from 'lighthouse'
+
 import { SELECTORS } from '../support/constants/selectors'
 import { lighthouseTest as test } from './fixtures'
 

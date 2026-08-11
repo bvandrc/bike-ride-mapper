@@ -1,5 +1,6 @@
-import readNDJSONStream from 'ndjson-readablestream'
 import { useEffect, useState } from 'react'
+import readNDJSONStream from 'ndjson-readablestream'
+
 import type { NdJsonMeta } from '@/types'
 
 const isMetaRow = (row: unknown): row is NdJsonMeta =>

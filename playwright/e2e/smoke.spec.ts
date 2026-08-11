@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+
 import { SELECTORS } from '../support/constants/selectors'
 
 test('home page loads', async ({ page }) => {
