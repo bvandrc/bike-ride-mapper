@@ -37,20 +37,24 @@ const HeaderSubtitle = ({ data }: { data: CustomWorkout[] | null }) => {
     return null
   }
   if (data.length === 0) {
-    return <b className="text-red-500">No data! Select layers!</b>
+    return (
+      <b className="text-red-500" data-testid="header-no-data">
+        No data! Select layers!
+      </b>
+    )
   }
 
   const numRoutes = data.length
   const distances = data.map(({ route }) => route.distance)
 
   return (
-    <>
+    <span data-testid="header-stats">
       # Routes: {numRoutes}
       <br />
       Total Distance: {round(sum(distances) * METERS_TO_MILES, 1)}mi
       <br />
       Longest Route: {round(Math.max(...distances) * METERS_TO_MILES, 1)}mi
-    </>
+    </span>
   )
 }
 
@@ -120,7 +124,10 @@ export const App = () => {
 
   return (
     <div className="relative h-full">
-      <header className="absolute inset-x-0 top-0 z-[2] pointer-events-none text-center max-sm:text-right">
+      <header
+        className="absolute inset-x-0 top-0 z-[2] pointer-events-none text-center max-sm:text-right"
+        data-testid="header"
+      >
         <div className="inline-block m-2 px-3 bg-black/40 shadow-panel rounded-lg max-sm:text-center max-sm:shadow-none">
           <h1 className="inline-block m-0.5 text-3xl font-bold text-[yellow] purple-shadow-bold max-sm:text-2xl">
             My Bike Rides
@@ -129,14 +136,17 @@ export const App = () => {
           <div className="inline-block mb-0.5 leading-5 text-amber-500 font-medium text-base italic text-shadow-black">
             <HeaderSubtitle data={visibleData} />
             {isLoading && (
-              <div className="text-lg text-yellow-300">
+              <div
+                className="text-lg text-yellow-300"
+                data-testid="header-loading"
+              >
                 Loading Routes... ({allWorkouts.length}/{total})
               </div>
             )}
           </div>
         </div>
       </header>
-      <main className="absolute inset-0 z-1">
+      <main className="absolute inset-0 z-1" data-testid="map">
         <MapContainer
           center={latLng(39.732_725_8, -104.985_146_9)}
           zoom={13}

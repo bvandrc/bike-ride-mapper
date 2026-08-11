@@ -70,10 +70,9 @@ https://github.com/bvandrc/bvandrc-conventions — follow all of them:
   CI runs. Notable rules that are errors: `noFloatingPromises`,
   `noImportCycles`, `noShadow`, `noUndeclaredDependencies`, `noTsIgnore`,
   `useNumericSeparators` (`39.732_725_8`) — fix the cause, don't suppress.
-- **Test IDs**: Prefer role- and text-based Playwright locators; reach for a
-  test ID only when there's no accessible handle. This repo's registry is a
-  flat `playwright/support/constants.ts`, not the nested
-  `support/constants/selectors.ts` that `conventions/playwright.md` describes.
+- **Test IDs**: Leaflet builds route paths itself, so `Route.tsx` tags them
+  through `onEachFeature` rather than a JSX `data-testid`; the registry entry
+  is `SELECTORS.MAP.ROUTE` like any other.
 - **Accessibility tests**: `color-contrast` is disabled globally because the
   header sits on a translucent panel over map tiles.
 - **Convention files**: `conventions/` is synced from
