@@ -6,11 +6,18 @@ runs:
 
   steps:
     - name: Cache Playwright browsers
+      id: playwright-cache
       uses: actions/cache@v6
       with:
         path: ~/.cache/ms-playwright
         key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
+    # Only on a miss. `--with-deps` shells out to apt every time it runs, which
+    # costs ~27s per job even when the cache had already restored the browser --
+    # and the runner image ships Chromium's system libraries anyway. If that
+    # ever stops being true, the fix is `npx playwright install-deps chromium`
+    # on the hit path, not dropping the condition.
     - name: Install Playwright browsers
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
       run: npx playwright install --with-deps chromium
       shell: bash
