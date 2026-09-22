@@ -1,0 +1,66 @@
+name: PR Reports
+
+# The jobs that report on a pull request by commenting on it.
+#
+# Note: Kept out of ci.yml because GitHub creates a check run for
+# every job in a workflow before it evaluates `if:`, so a single file
+# serving both push and pull_request reports the other event's jobs as
+# skipped checks on every PR.
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write # reports posted as sticky PR comments
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  line-count:
+    name: Line Count
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # Required: diffs the merge base against the head, so both have to be in the clone.
+
+      # Installs cloc, resolves the merge base, writes the job summary and posts the comment.
+      - name: Count the changed lines
+        uses: bvandrc/pr-diff-line-count@v1
+
+  bundle-size:
+    name: Bundle Size
+    runs-on: ubuntu-latest
+    env:
+      MAPTILER_API_KEY: ${{ secrets.MAPTILER_API_KEY }} # baked into the bundle by vite.config.ts, so the build needs it
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # Required: the action checks out and builds the base branch to diff against
+
+      # Not ./.github/actions/setup: that installs node_modules, and the action
+      # runs its own `pnpm install` for each of the two builds anyway. pnpm and
+      # Node plus a warm store is all this job can usefully hand it.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          cache: pnpm
+
+      - name: Compare bundle size
+        uses: preactjs/compressed-size-action@v2
+        with:
+          pattern: 'dist/**/*.{js,css}'
+          # Vite emits `<name>-<8 char hash>.<ext>`, and the hash charset
+          # includes `-` (`Card-BT-k-Zkp.js`), so the separator alone can't
+          # anchor the match -- the extension dot can. Without a strip every
+          # touched chunk reads as one file added and another removed.
+          strip-hash: '-[A-Za-z0-9_-]{8}(?=\.)'
+          minimum-change-threshold: 100
+          sort-by: 'Change:desc'
