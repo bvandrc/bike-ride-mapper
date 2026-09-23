@@ -12,7 +12,7 @@ test('home page loads', async ({ page }) => {
   await expect(page.getByText('Bike Records')).toBeVisible()
 
   // workout routes stream in and populate the header stats
-  await expect(page.locator(SELECTORS.HEADER.STATS)).toBeVisible({
+  await expect(page.getByTestId(SELECTORS.HEADER.STATS)).toBeVisible({
     timeout: 15_000,
   })
 

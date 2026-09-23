@@ -66,8 +66,10 @@ const useHoveredRouteStore = () => {
 }
 
 /**
- * Hover state for one route. Only the routes whose state changed re-render,
- * and the setter is stable, so hover handlers never need re-binding.
+ * Hover state for one route.
+ *
+ * Only the routes whose state changed re-render, and the setter is stable, so
+ * hover handlers never need re-binding.
  */
 export const useHoveredRoute = (id: string) => {
   const store = useHoveredRouteStore()

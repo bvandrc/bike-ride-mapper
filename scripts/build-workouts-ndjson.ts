@@ -1,7 +1,9 @@
 /**
  * Builds a single NDJSON file from the workouts folder for static hosting.
- * Run from project root: pnpm build:workouts
- * Output: public/workouts.ndjson (first line = _meta with total, then one workout per line)
+ *
+ * Run from the project root: `pnpm build:workouts`. The output is
+ * `public/workouts.ndjson`, whose first line is a `_meta` row carrying the
+ * total, followed by one workout per line.
  */
 import fs from 'node:fs'
 import path from 'node:path'
