@@ -20,6 +20,7 @@ Conventions live outside this file, synced from https://github.com/bvandrc/bvand
 
 - `pnpm dev` — dev server on port 5173. `pnpm build`, `pnpm preview`.
 - `pnpm format` — Biome check/fix. `pnpm check` — the full gate: format plus `tsc` for the app and for `playwright/tsconfig.json`. Run before every commit; it's what CI runs.
+- `pnpm test` — Vitest unit tests over `src/` and `scripts/`. `pnpm test:watch`, `pnpm test:coverage`; CI runs `pnpm test:unit`, which is the coverage run.
 - `pnpm preview:ci` — build and serve on port 4173, which is what the Playwright suites expect.
 - `pnpm test:e2e`, `pnpm test:a11y`, `pnpm test:lighthouse` — the Playwright projects, all against a running preview server (`test:a11y` covers desktop and mobile). `pnpm pw:open` for the UI runner.
 - `pnpm get-data` — refresh `workouts/` from MapMyRide (needs `MMR_USER_ID` and a token from `pnpm get-mmr-token`). `pnpm build:workouts` — regenerate `public/workouts.ndjson`; `prebuild` runs it for you.
@@ -30,5 +31,6 @@ Conventions live outside this file, synced from https://github.com/bvandrc/bvand
 - **Leaflet**: Prefer react-leaflet's declarative components; drop to the imperative Leaflet API through `useMap` or a ref only where no component exists (see the arrow decorators in `Route.tsx`), and clean up in the effect's return. Alias colliding Leaflet type imports rather than renaming the component (`type Map as LeafletMap`).
 - **Styling**: Tailwind v4 is configured CSS-first — there's no `tailwind.config`. Shared shadows and other one-off utilities go in `src/styles/index.css` as `@utility` blocks (`shadow-panel`, `text-shadow-black`); prefer those over repeating raw CSS in `className`.
 - **Environment variables**: Read them through `getEnv()` (`src/utils/get-env.ts` in the app, `scripts/utils/get-env.ts` in scripts), never bare `process.env` — it throws on a missing or empty value instead of failing later. Vite injects them via `define`, so app code sees only what's in the environment at build time.
+- **Unit vs Playwright**: the geodesic checks, the NDJSON builder's skip rules, `getEnv`, and `useNdjsonStream`'s batching all have unit tests in a `__tests__` folder beside them — none of them need a map on screen. Playwright keeps the wiring: that the app streams the file and draws what it gets.
 - **Accessibility tests**: `color-contrast` is disabled globally because the header sits on a translucent panel over map tiles.
 - **Convention files**: `conventions/` is synced from https://github.com/bvandrc/bvandrc-conventions and overwritten on every sync. Edit a rule upstream, never in that directory.
