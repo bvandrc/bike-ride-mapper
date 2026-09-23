@@ -9,7 +9,7 @@ test('Home page', async ({ page }) => {
   await page.goto('/')
 
   // workout routes stream in and populate the header stats
-  await expect(page.locator(SELECTORS.HEADER.STATS)).toBeVisible({
+  await expect(page.getByTestId(SELECTORS.HEADER.STATS)).toBeVisible({
     timeout: 15_000,
   })
   await checkA11y(page)

@@ -16,7 +16,7 @@ test('Home page', async ({ page, runAudit }) => {
   })
 
   // workout routes can take more than default timeout to load.
-  await expect(page.locator(SELECTORS.HEADER.STATS)).toBeVisible({
+  await expect(page.getByTestId(SELECTORS.HEADER.STATS)).toBeVisible({
     timeout: 15_000,
   })
 
