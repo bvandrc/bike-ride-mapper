@@ -35,7 +35,11 @@
     "format": "biome check . --fix",
     "ts:check": "tsc",
     "pw:ts:check": "tsc --project playwright/tsconfig.json",
-    "__c2": "====================[ Playwright Testing ]=======================",
+    "__c2": "====================[ Unit Testing ]============================",
+    "test": "vitest",
+    "test:unit": "pnpm test",
+    "test:watch": "pnpm run test --watch",
+    "__c3": "====================[ Playwright Testing ]=======================",
     "test:e2e": "pnpm pw:run --project=e2e",
     "test:a11y": "pnpm pw:run --project=a11y --project=a11y:mobile",
     "test:lighthouse": "pnpm pw:run --project=lighthouse",
@@ -43,7 +47,7 @@
     "pw:run": "playwright test",
     "pw:open": "playwright test --ui",
     "pw:report": "playwright show-report playwright/results/html",
-    "__c3": "====================[ Misc ]=====================================",
+    "__c4": "====================[ Misc ]=====================================",
     "get-data": "tsx ./scripts/get-workouts.ts",
     "get-mmr-token": "tsx ./scripts/get-mmr-token.ts",
     "build:workouts": "tsx ./scripts/build-workouts-ndjson.ts"
@@ -83,6 +87,7 @@
     "tsx": "^4",
     "type-fest": "^5",
     "typescript": "^7",
-    "vite": "^8"
+    "vite": "^8",
+    "vitest": "^4"
   }
 }
