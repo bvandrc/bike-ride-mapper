@@ -20,7 +20,7 @@ Conventions live outside this file, synced from https://github.com/bvandrc/bvand
 
 - `pnpm dev` — dev server on port 5173. `pnpm build`, `pnpm preview`.
 - `pnpm format` — Biome check/fix. `pnpm check` — the full gate: format plus `tsc` for the app and for `playwright/tsconfig.json`. Run before every commit; it's what CI runs.
-- `pnpm test` — Vitest unit tests over `src/` and `scripts/`. `pnpm test:watch`, `pnpm test:coverage`; CI runs `pnpm test:unit`, which is the coverage run.
+- `pnpm test` — Vitest unit tests over `src/` and `scripts/`. `pnpm test:watch` to re-run on a change; CI runs `pnpm test:unit`.
 - `pnpm preview:ci` — build and serve on port 4173, which is what the Playwright suites expect.
 - `pnpm test:e2e`, `pnpm test:a11y`, `pnpm test:lighthouse` — the Playwright projects, all against a running preview server (`test:a11y` covers desktop and mobile). `pnpm pw:open` for the UI runner.
 - `pnpm get-data` — refresh `workouts/` from MapMyRide (needs `MMR_USER_ID` and a token from `pnpm get-mmr-token`). `pnpm build:workouts` — regenerate `public/workouts.ndjson`; `prebuild` runs it for you.

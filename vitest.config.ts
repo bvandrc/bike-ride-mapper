@@ -16,16 +16,5 @@ export default defineConfig({
     root: '.',
     include: ['./{src,scripts}/**/*.{test,spec}.*'],
     exclude: ['**/node_modules/**', '**/dist/**', '**/playwright/**'],
-    coverage: {
-      exclude: [
-        '**/__*__/**',
-        '**/types/**',
-        '**/dist/**',
-        '**/playwright/**',
-        '**/*.d.ts',
-        '*.config.ts',
-      ],
-      reporter: ['text', 'html', 'json', 'lcov'],
-    },
   },
 })
