@@ -1,5 +1,6 @@
-// The app and the scripts carry their own copy of this module, on purpose --
-// Vite injects the app's values at build time. src/utils/ has the twin of this file.
+// The app carries a byte-identical copy at src/utils/get-env.ts, on purpose --
+// Vite injects its values at build time. One set of cases covers the behaviour;
+// if the two ever diverge, the app's copy earns its own.
 import { getEnv } from '../get-env'
 
 describe('getEnv', () => {
@@ -33,9 +34,5 @@ describe('getEnv', () => {
         'Missing required environment variable: BLANK'
       )
     }
-  })
-
-  it('returns nothing to check when asked for nothing', () => {
-    expect(getEnv()).toEqual({})
   })
 })

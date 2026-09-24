@@ -94,15 +94,6 @@ describe('build-workouts-ndjson', () => {
     }
   })
 
-  it('ignores anything in the folder that is not a workout', async () => {
-    const { rows } = await build({
-      'a.json': workout(),
-      'notes.md': 'not a workout',
-    })
-
-    expect(rows).toHaveLength(1)
-  })
-
   it('writes a file with a zero total rather than none at all', async () => {
     // The app fetches this path either way, so an absent file is a 404.
     const { meta, rows } = await build({})

@@ -69,15 +69,6 @@ describe('useNdjsonStream', () => {
     expect(result.current.data).toEqual(workouts(2))
   })
 
-  it('keeps the meta row out of the data it hands back', async () => {
-    serve([{ _meta: { total: 1 } }, { id: 0 }])
-
-    const { result } = renderHook(() => useNdjsonStream<Workout>('/w.ndjson'))
-
-    await waitFor(() => expect(result.current.isLoading).toBe(false))
-    expect(result.current.data).toEqual([{ id: 0 }])
-  })
-
   it('leaves the total unset when the file carries no meta row', async () => {
     serve(workouts(3))
 

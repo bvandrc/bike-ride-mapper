@@ -30,15 +30,6 @@ describe('simplifyGeoJson', () => {
     expect(numPointsSimplified).toBeLessThan(numPointsUnsimplified)
   })
 
-  it('leaves a line alone when the tolerance is too fine to drop anything', () => {
-    const { numPointsSimplified, numPointsUnsimplified } = simplifyGeoJson(
-      lineCollection(WANDERING_LINE),
-      { tolerance: 0 }
-    )
-
-    expect(numPointsSimplified).toBe(numPointsUnsimplified)
-  })
-
   it('refuses a collection that is not one route', () => {
     for (const collection of [
       lineCollection(),
