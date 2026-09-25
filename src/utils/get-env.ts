@@ -1,4 +1,4 @@
-import { typedFromEntries } from './typed-object'
+import { typedFromEntries } from '@/utils'
 
 export function getEnv<Keys extends string[]>(...keys: Keys) {
   return typedFromEntries(
