@@ -1,6 +1,10 @@
+import { typedFromEntries } from './typed-object'
+
 export function getEnv<Keys extends string[]>(...keys: Keys) {
-  return Object.fromEntries(
-    keys.map((key) => {
+  return typedFromEntries(
+    // Annotated as a tuple so the keys stay the ones asked for rather than
+    // widening to `string`.
+    keys.map((key): [Keys[number], string] => {
       const value = process.env[key]
 
       if (typeof value !== 'string' || value.trim() === '') {
@@ -8,5 +12,5 @@ export function getEnv<Keys extends string[]>(...keys: Keys) {
       }
       return [key, value]
     })
-  ) as Record<Keys[number], string>
+  )
 }
