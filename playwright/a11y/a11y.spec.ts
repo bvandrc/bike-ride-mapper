@@ -3,18 +3,20 @@ import { expect, test } from '@playwright/test'
 import { SELECTORS } from '~/pw/support/constants/selectors'
 import { checkA11y } from './accessibility'
 
+const { HEADER, MAP } = SELECTORS
+
 // One "workflow" test: the page with routes loaded, then with a route
 // layer toggled off — scanned once each.
 test('Home page', async ({ page }) => {
   await page.goto('/')
 
   // workout routes stream in and populate the header stats
-  await expect(page.getByTestId(SELECTORS.HEADER.STATS)).toBeVisible({
+  await expect(page.getByTestId(HEADER.STATS)).toBeVisible({
     timeout: 15_000,
   })
   await checkA11y(page)
 
-  await expect(page.locator(SELECTORS.MAP.ROUTE).first()).toBeAttached({
+  await expect(page.locator(MAP.ROUTE).first()).toBeAttached({
     timeout: 15_000,
   })
   await checkA11y(page)
