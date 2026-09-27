@@ -4,6 +4,8 @@ import { desktopConfig } from 'lighthouse'
 import { SELECTORS } from '~/pw/support/constants/selectors'
 import { lighthouseTest as test } from './fixtures'
 
+const { HEADER } = SELECTORS
+
 test('Home page', async ({ page, runAudit }) => {
   await page.goto('./')
 
@@ -16,7 +18,7 @@ test('Home page', async ({ page, runAudit }) => {
   })
 
   // workout routes can take more than default timeout to load.
-  await expect(page.getByTestId(SELECTORS.HEADER.STATS)).toBeVisible({
+  await expect(page.getByTestId(HEADER.STATS)).toBeVisible({
     timeout: 15_000,
   })
 
