@@ -10,6 +10,7 @@ export default defineConfig({
     // A spy declared once for a `describe` starts each case empty, so a
     // `toHaveBeenCalledWith` cannot pass on a call from the case before it.
     clearMocks: true,
+    environment: 'happy-dom',
     globals: true,
     watch: false,
     root: '.',
