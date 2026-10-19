@@ -51,6 +51,10 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
       className
     )}
     ```
-- **usehooks-ts**: Keep in mind that we can use this package for hooks (`useEventListener`, `useMediaQuery`, ...). Never use `useBoolean` — plain `useState` is no more code.
+- **Available packages**: Every React repo should have these installed — check them before writing your own.
+  - **[usehooks-ts](https://usehooks-ts.com)**: General-purpose hooks (e.g. `useEventListener`, `useMediaQuery`, `useLocalStorage`, `useDebounceCallback`, and more).
+    - Never use `useBoolean` — plain `useState` is no more code.
+  - **[@bvandrc/react-ui-hooks](https://github.com/bvandrc/react-ui-hooks#readme)**: Our own package of UI behavior hooks and helpers — viewport and device, page lifecycle, scrolling, focus, press and toggle, input, and state and timing — plus plain helpers for sharing and logging. Check its README before writing one of these yourself.
+    - Its `test-support` entry point has Vitest mocks for the browser APIs test DOMs lack (`matchMedia`, `visualViewport`, `ResizeObserver`, ...) — use them rather than hand-rolling your own.
 - **Test IDs**: Use `data-testid` as the HTML attribute *and* as the prop name in component interfaces (not `testId`).
 - **Accessible names**: If an `aria-label`'s value would just repeat text already visible in a nearby element (e.g. a row label, column header, or adjacent title), use `aria-labelledby` pointing at that existing element's `id` (add one via React's `useId` if it doesn't have one) instead of duplicating the string. Don't introduce a new `sr-only` element just to make this work — if there's no existing visible text to point to, a plain `aria-label` is fine.
