@@ -16,6 +16,7 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
       lib/         non-React helpers only <Name> uses
       __tests__/
     ```
+
     - **Folder only when needed**: A component with nothing private stays a single file. It moves into a folder when it first gets a private module.
     - **Import through the index**: Code outside the folder imports from the folder (its `index.ts`), never from its `hooks/` or `lib/` directly. The index carries a `biome-ignore lint/performance/noBarrelFile` with its reason, since the shared Biome config forbids barrels everywhere else. The one exception is where going through the index would close an import cycle: there, import the file directly.
     - **A second consumer promotes it**: When a private module gains a consumer outside its folder, move it up to the shared `hooks/` or `lib/` rather than importing into another component's folder.
@@ -29,7 +30,7 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
   - **Spreading props**: When there are many pass-through props to an inner component or element, spread them to it. (For one or two, name them explicitly.)
   - **Children**: Declare `children: React.ReactNode` on the props type yourself rather than reaching for `React.PropsWithChildren`, which makes it optional — a component that renders its children should fail to compile when a caller leaves them out. Mark it optional only where the component is meant to render without any. Put it last in the props type, the same place it lands in JSX: after every attribute.
 - **Styling**
-  - **Variant styling**: Map variants to classes in a module-level constant (`satisfies Record<Variant, string>`) and index into it — not conditionals inside JSX.
+  - **Variant styling**: A component's styling variants (`variant`, `size`, ...) go through [`cva`](https://cva.style), the tool shadcn/ui's primitives already use, whose `VariantProps` types them. A `cva` with no variants is just its base classes: pass those to `cn` instead. Any other mapping from a value to classes is a module-level constant indexed into — never conditionals inside JSX.
   - **Tailwind sizing**: Use the `size-X` Tailwind class, not `w-X h-X`.
   - **Commenting a `className`**: A comment above a `className` string, or a `cn(...)` call, must describe the whole string that follows it. If it only explains one class or a subgroup, split that class or subgroup into its own `cn()` argument and move the comment to sit directly above just that argument, rather than leaving it above the full multi-class string it doesn't fully describe.
 
@@ -51,10 +52,11 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
       className
     )}
     ```
+
 - **Available packages**: Every React repo should have these installed — check them before writing your own.
   - **[usehooks-ts](https://usehooks-ts.com)**: General-purpose hooks (e.g. `useEventListener`, `useMediaQuery`, `useLocalStorage`, `useDebounceCallback`, and more).
     - Never use `useBoolean` — plain `useState` is no more code.
   - **[@bvandrc/react-ui-hooks](https://github.com/bvandrc/react-ui-hooks#readme)**: Our own package of UI behavior hooks and helpers — viewport and device, page lifecycle, scrolling, focus, press and toggle, input, and state and timing — plus plain helpers for sharing and logging. Check its README before writing one of these yourself.
     - Its `test-support` entry point has Vitest mocks for the browser APIs test DOMs lack (`matchMedia`, `visualViewport`, `ResizeObserver`, ...) — use them rather than hand-rolling your own.
-- **Test IDs**: Use `data-testid` as the HTML attribute *and* as the prop name in component interfaces (not `testId`).
+- **Test IDs**: Use `data-testid` as the HTML attribute _and_ as the prop name in component interfaces (not `testId`).
 - **Accessible names**: If an `aria-label`'s value would just repeat text already visible in a nearby element (e.g. a row label, column header, or adjacent title), use `aria-labelledby` pointing at that existing element's `id` (add one via React's `useId` if it doesn't have one) instead of duplicating the string. Don't introduce a new `sr-only` element just to make this work — if there's no existing visible text to point to, a plain `aria-label` is fine.
