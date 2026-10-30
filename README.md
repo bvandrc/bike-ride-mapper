@@ -7,6 +7,6 @@
 
 **⭐ URL: https://bvandrc.github.io/bike-ride-mapper/ 🔗⭐**
 
-![screenshot default view](readme_images/screenshot-default-view.png 'Default View')
+![screenshot default view](readme_images/screenshot-default-view.png "Default View")
 
-![screenshot satellite view](readme_images/screenshot-satellite-view.png 'Satellite View')
+![screenshot satellite view](readme_images/screenshot-satellite-view.png "Satellite View")
