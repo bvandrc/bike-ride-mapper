@@ -83,6 +83,7 @@
     "dotenv": "^18",
     "lighthouse": "^13",
     "lighthouse-audit-utils": "^1",
+    "memfs": "^4",
     "tailwindcss": "^4",
     "tsx": "^4",
     "type-fest": "^5",
