@@ -1,16 +1,15 @@
-import { typedFromEntries } from '@/utils'
+import { zipObject } from 'es-toolkit'
 
 export function getEnv<Keys extends string[]>(...keys: Keys) {
-  return typedFromEntries(
-    // Annotated as a tuple so the keys stay the ones asked for rather than
-    // widening to `string`.
-    keys.map((key): [Keys[number], string] => {
+  return zipObject(
+    keys,
+    keys.map((key) => {
       const value = process.env[key]
 
       if (typeof value !== 'string' || value.trim() === '') {
         throw new Error(`Missing required environment variable: ${key}`)
       }
-      return [key, value]
+      return value
     })
   )
 }
