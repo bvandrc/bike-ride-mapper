@@ -3,7 +3,7 @@
 Map of my tracked bike rides, deployed to GitHub Pages by `.github/workflows/deploy.yml`.
 
 - **Stack**: React 18 + Vite + TypeScript, Tailwind v4, Leaflet via react-leaflet, Luxon, es-toolkit, Biome, Playwright for e2e/a11y/Lighthouse.
-- **Layout**: `src/` is the app; `scripts/` holds the tsx-run MapMyRide fetchers and the NDJSON builder; `workouts/` is the raw per-ride JSON; `playwright/` is all tests, with shared helpers and selectors under `playwright/support/`.
+- **Layout**: `src/` is the app; `scripts/` holds the tsx-run MapMyRide fetchers and the NDJSON builder; `workouts/` is the raw per-ride JSON; `playwright/` is the browser suites, with shared helpers and selectors under `playwright/support/`; unit tests sit in `__tests__/` folders beside the modules they cover.
 - **Data flow**: `pnpm get-data` pulls rides from MapMyRide into `workouts/*.json`, `pnpm build:workouts` rolls those into `public/workouts.ndjson` (first line is a `_meta` row with the total), and the app streams that file at runtime via `useNdjsonStream`. Both outputs are generated — don't hand-edit them, regenerate.
 - **Base path**: Pages serves the site from a subpath, so `vite.config.ts` sets `base: '/bike-ride-mapper/'`. In app code, build asset and data URLs from `import.meta.env.BASE_URL` (see `useWorkouts.ts`) — a leading-slash path like `/workouts.ndjson` works in dev and 404s once deployed.
 
@@ -11,10 +11,12 @@ Map of my tracked bike rides, deployed to GitHub Pages by `.github/workflows/dep
 
 Conventions live outside this file, synced from https://github.com/bvandrc/bvandrc-conventions — follow all of them:
 
-@conventions/typescript.md — language-level TypeScript/JavaScript rules
-@conventions/react.md — component, JSX, and accessibility rules
-@conventions/playwright.md — test layout, test IDs, and accessibility scans
-@conventions/all.md — practice for every repo: branches, formatting, markdown, PR reviews
+- @conventions/typescript.md — language-level TypeScript/JavaScript rules
+- @conventions/react.md — component, JSX, and accessibility rules
+- @conventions/ts-testing-all.md — testing rules shared by every TypeScript suite: test IDs, naming, assertions
+- @conventions/playwright.md — test layout, test IDs, and accessibility scans
+- @conventions/ts-unit-testing.md — TypeScript unit test layout, naming, fixtures, and assertions
+- @conventions/all.md — practice for every repo: branches, formatting, writing, PR reviews
 
 ## Commands
 
@@ -32,4 +34,5 @@ Conventions live outside this file, synced from https://github.com/bvandrc/bvand
 - **Styling**: Tailwind v4 is configured CSS-first — there's no `tailwind.config`. Shared shadows and other one-off utilities go in `src/styles/index.css` as `@utility` blocks (`shadow-panel`, `text-shadow-black`); prefer those over repeating raw CSS in `className`.
 - **Environment variables**: Read them through `getEnv()` (`src/utils/get-env.ts` in the app, `scripts/utils/get-env.ts` in scripts), never bare `process.env` — it throws on a missing or empty value instead of failing later. Vite injects them via `define`, so app code sees only what's in the environment at build time.
 - **Accessibility tests**: `color-contrast` is disabled globally because the header sits on a translucent panel over map tiles.
+- **Typed `Object` walks**: `typedKeys`, `typedEntries`, and `typedFromEntries`, exported from `src/utils/index.ts`, are ours. They are the builtins with the cast a call site would otherwise write by hand, so reach for one instead of asserting the result -- and leave `Object.keys`/`entries`/`fromEntries` alone where the widened type is what's wanted.
 - **Convention files**: `conventions/` is synced from https://github.com/bvandrc/bvandrc-conventions and overwritten on every sync. Edit a rule upstream, never in that directory.

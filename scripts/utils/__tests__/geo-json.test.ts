@@ -8,7 +8,7 @@ const WANDERING_LINE: Position[] = Array.from({ length: 50 }, (_, i) => [
   39.75 + (i % 2) * 0.000_01,
 ])
 
-const lineCollection = (...lines: Position[][]): FeatureCollection => ({
+const buildLineCollection = (...lines: Position[][]): FeatureCollection => ({
   type: 'FeatureCollection',
   features: lines.map((coordinates) => ({
     type: 'Feature',
@@ -17,23 +17,27 @@ const lineCollection = (...lines: Position[][]): FeatureCollection => ({
   })),
 })
 
-const pointCount = (collection: FeatureCollection) =>
+const getPointCount = (collection: FeatureCollection) =>
   (collection.features[0].geometry as LineString).coordinates.length
 
 describe('simplifyGeoJson', () => {
   it('reports the point count either side of the simplification', () => {
-    const { geoJsonSimplified, numPointsUnsimplified, numPointsSimplified } =
-      simplifyGeoJson(lineCollection(WANDERING_LINE), { tolerance: 0.001 })
+    const result = simplifyGeoJson(buildLineCollection(WANDERING_LINE), {
+      tolerance: 0.001,
+    })
 
-    expect(numPointsUnsimplified).toBe(WANDERING_LINE.length)
-    expect(numPointsSimplified).toBe(pointCount(geoJsonSimplified))
-    expect(numPointsSimplified).toBeLessThan(numPointsUnsimplified)
+    expect(result).toMatchObject({
+      numPointsUnsimplified: WANDERING_LINE.length,
+      numPointsSimplified: getPointCount(result.geoJsonSimplified),
+    })
+    // Simplification actually dropped points.
+    expect(result.numPointsSimplified).toBeLessThan(WANDERING_LINE.length)
   })
 
   it('refuses a collection that is not one route', () => {
     for (const collection of [
-      lineCollection(),
-      lineCollection(WANDERING_LINE, WANDERING_LINE),
+      buildLineCollection(),
+      buildLineCollection(WANDERING_LINE, WANDERING_LINE),
     ]) {
       expect(
         () => simplifyGeoJson(collection, { tolerance: 0.001 }),

@@ -21,7 +21,7 @@
   "license": "ISC",
   "type": "module",
   "main": "index.js",
-  "packageManager": "pnpm@11.9.0",
+  "packageManager": "pnpm@12.15.0",
   "scripts": {
     "__c0": "====================[ Build & Development ]======================",
     "start": "pnpm dev",
@@ -64,7 +64,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4",
-    "@biomejs/biome": "^2",
+    "@biomejs/biome": "^2.6",
     "@playwright/test": "^1",
     "@tailwindcss/vite": "^4",
     "@testing-library/react": "^16",
@@ -81,7 +81,7 @@
     "@vitejs/plugin-react": "^6",
     "@xmldom/xmldom": "^0.9",
     "axe-core": "^4",
-    "dotenv": "^16",
+    "dotenv": "^18",
     "happy-dom": "^20",
     "lighthouse": "^13",
     "lighthouse-audit-utils": "^1",
@@ -91,6 +91,6 @@
     "type-fest": "^5",
     "typescript": "^7",
     "vite": "^8",
-    "vitest": "^4"
+    "vitest": "^5"
   }
 }

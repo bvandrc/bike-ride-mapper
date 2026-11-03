@@ -4,7 +4,7 @@ import type {
   Route,
   Workout,
 } from '@/types/map-my-ride'
-import { getEnv } from '@/utils/get-env'
+import { getEnv } from '../utils/get-env'
 import { getInput } from '../utils/get-input'
 
 export class MapMyRideClient {
