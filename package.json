@@ -67,6 +67,8 @@
     "@biomejs/biome": "^2.6",
     "@playwright/test": "^1",
     "@tailwindcss/vite": "^4",
+    "@testing-library/dom": "^10",
+    "@testing-library/react": "^16",
     "@tmcw/togeojson": "^7",
     "@turf/distance": "^7",
     "@turf/simplify": "^7",
@@ -81,6 +83,7 @@
     "@xmldom/xmldom": "^0.9",
     "axe-core": "^4",
     "dotenv": "^18",
+    "happy-dom": "^21",
     "lighthouse": "^13",
     "lighthouse-audit-utils": "^1",
     "tailwindcss": "^4",
@@ -88,6 +91,7 @@
     "type-fest": "^5",
     "typescript": "^7",
     "vite": "^8",
-    "vitest": "^5"
+    "vitest": "^5",
+    "zod": "^4"
   }
 }

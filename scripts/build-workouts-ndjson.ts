@@ -3,12 +3,15 @@
  *
  * Run from the project root: `pnpm build:workouts`. The output is
  * `public/workouts.ndjson`, whose first line is a `_meta` row carrying the
- * total, followed by one workout per line.
+ * total, followed by one workout per line. Each file is parsed against
+ * `CustomWorkoutSchema` on the way, and one that doesn't match fails the run.
  */
 import fs from 'node:fs'
 import path from 'node:path'
+import { z } from 'zod'
 
-import type { CustomWorkout, NdJsonMeta } from '@/types'
+import { CustomWorkoutSchema } from '@/schemas/custom-workout'
+import type { NdJsonMeta } from '@/types'
 
 const WORKOUTS_DIR = path.join(process.cwd(), 'workouts')
 const OUT_DIR = path.join(process.cwd(), 'public')
@@ -35,17 +38,13 @@ function build() {
   const lines: string[] = []
   for (const file of files) {
     const raw = fs.readFileSync(path.join(WORKOUTS_DIR, file), 'utf-8')
-    const data: CustomWorkout = JSON.parse(raw)
-    if (data.pathHasIssue === true) continue
-    if (
-      [data.geoJson, data.workout, data.route, data.activityType].some(
-        (field) => !field
-      )
-    ) {
-      console.warn(`Skipping ${file}: missing required fields`)
-      continue
-    }
-    lines.push(JSON.stringify(data))
+    const result = CustomWorkoutSchema.safeParse(JSON.parse(raw))
+    // A file that doesn't match fails the build, and with it the deploy,
+    // rather than shipping a ride the map can't draw.
+    if (!result.success)
+      throw new Error(`${file} is invalid:\n${z.prettifyError(result.error)}`)
+    if (result.data.pathHasIssue === true) continue
+    lines.push(JSON.stringify(result.data))
   }
 
   writeFile(lines)

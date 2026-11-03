@@ -1,15 +1,8 @@
-import type { GeoJsonObject } from 'geojson'
+import type { z } from 'zod'
 
-import type { ActivityType, Route, Workout } from './map-my-ride'
+import type { CustomWorkoutSchema } from '@/schemas/custom-workout'
 
-export interface CustomWorkout {
-  title: string
-  pathHasIssue?: boolean
-  geoJson: GeoJsonObject
-  workout: Omit<Workout, '_links' | 'time_series' | 'sharing' | 'attachments'>
-  route: Omit<Route, '_links'>
-  activityType: Omit<ActivityType, '_links' | 'mets_speed'>
-}
+export type CustomWorkout = z.infer<typeof CustomWorkoutSchema>
 
 export interface NdJsonMeta {
   _meta?: { total: number }

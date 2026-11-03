@@ -1,9 +1,12 @@
-import type {
-  ActivityType,
-  OAuthResponse,
-  Route,
-  Workout,
-} from '@/types/map-my-ride'
+import { z } from 'zod'
+
+import {
+  ActivityTypeSchema,
+  OAuthResponseSchema,
+  RouteSchema,
+  WorkoutSchema,
+} from '@/schemas/map-my-ride'
+import type { Route, Workout } from '@/types/map-my-ride'
 import { getEnv } from '../utils/get-env'
 import { getInput } from '../utils/get-input'
 
@@ -43,6 +46,20 @@ export class MapMyRideClient {
     }
   }
 
+  /** Parses a response body against `schema`, naming the endpoint on a mismatch. */
+  private async parse<Schema extends z.ZodType>(
+    endpoint: string,
+    response: Response,
+    schema: Schema
+  ): Promise<z.infer<Schema>> {
+    const result = schema.safeParse(await response.json())
+    if (!result.success)
+      throw new Error(
+        `Unexpected response from ${endpoint}:\n${z.prettifyError(result.error)}`
+      )
+    return result.data
+  }
+
   async get(endpoint: string) {
     return await this.request(endpoint, {
       method: 'GET',
@@ -60,22 +77,20 @@ export class MapMyRideClient {
     refresh_token?: string
   }) {
     const { MMR_CLIENT_SECRET } = getEnv('MMR_CLIENT_SECRET')
-    const response: OAuthResponse = await this.request(
-      '/v7.2/oauth2/access_token/',
-      {
-        method: 'POST',
-        headers: {
-          ...this.apiKeyHeader,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          ...params,
-          client_id: this.CLIENT_ID,
-          client_secret: MMR_CLIENT_SECRET,
-        }),
-      }
-    ).then((r) => r.json())
-    return response
+    const endpoint = '/v7.2/oauth2/access_token/'
+    const response = await this.request(endpoint, {
+      method: 'POST',
+      headers: {
+        ...this.apiKeyHeader,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        ...params,
+        client_id: this.CLIENT_ID,
+        client_secret: MMR_CLIENT_SECRET,
+      }),
+    })
+    return await this.parse(endpoint, response, OAuthResponseSchema)
   }
 
   async printAuthToken() {
@@ -101,24 +116,29 @@ export class MapMyRideClient {
     process.exit(0)
   }
 
-  async getAll<T>(
+  async getAll<Item extends z.ZodType>(
     endpoint: string,
     key: string,
+    item: Item,
     params: Record<string, string>
   ) {
+    const pageSchema = z.object({
+      _embedded: z.object({ [key]: z.array(item) }),
+    })
+
     const getBatch = async (limit: number, offset: number) => {
-      const response = await this.get(
+      const url =
         `/v7.2/${endpoint}/?` +
-          new URLSearchParams({
-            limit: String(limit),
-            offset: String(offset),
-            ...params,
-          })
-      ).then((r) => r.json())
-      return response._embedded[key] as T[]
+        new URLSearchParams({
+          limit: String(limit),
+          offset: String(offset),
+          ...params,
+        })
+      const page = await this.parse(url, await this.get(url), pageSchema)
+      return page._embedded[key]
     }
 
-    const items: T[] = []
+    const items: z.infer<Item>[] = []
     while (true) {
       const newItems = await getBatch(10, items.length)
       if (newItems.length === 0) break
@@ -129,19 +149,23 @@ export class MapMyRideClient {
   }
 
   async getWorkouts({ user_id }: { user_id: string }) {
-    return await this.getAll<Workout>('workout', 'workouts', {
+    return await this.getAll('workout', 'workouts', WorkoutSchema, {
       user: user_id,
       order_by: 'start_datetime',
     })
   }
 
-  async getRoute(workout: Workout): Promise<Route> {
-    return await this.get(workout._links.route[0].href).then((r) => r.json())
+  async getRoute(workout: Workout) {
+    const endpoint = workout._links.route[0].href
+    return await this.parse(endpoint, await this.get(endpoint), RouteSchema)
   }
 
-  async getActivityType(workout: Workout): Promise<ActivityType> {
-    return await this.get(workout._links.activity_type[0].href).then((r) =>
-      r.json()
+  async getActivityType(workout: Workout) {
+    const endpoint = workout._links.activity_type[0].href
+    return await this.parse(
+      endpoint,
+      await this.get(endpoint),
+      ActivityTypeSchema
     )
   }
 

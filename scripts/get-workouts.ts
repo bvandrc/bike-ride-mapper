@@ -1,16 +1,12 @@
-import { readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { gpx as gpxToGeoJson } from '@tmcw/togeojson'
 import { DOMParser } from '@xmldom/xmldom'
 import { mapAsync } from 'es-toolkit'
 import type { LineString } from 'geojson'
 import { DateTime } from 'luxon'
 
+import { CustomWorkoutSchema } from '@/schemas/custom-workout'
 import type { CustomWorkout } from '@/types'
-import {
-  ActivityName,
-  type ActivityType,
-  type Route,
-} from '@/types/map-my-ride'
 import { MapMyRideClient } from './api/map-my-ride.api'
 import { validatePointsDistance } from './utils/coordinates'
 import { simplifyGeoJson } from './utils/geo-json'
@@ -37,12 +33,10 @@ await mapAsync(
       zone: 'America/Denver',
     })
     try {
-      const route: Route = await mapMyRideClient.getRoute(workout)
-      const activityType: ActivityType =
-        await mapMyRideClient.getActivityType(workout)
-
-      if (!Object.values(ActivityName).includes(activityType.name))
-        throw new Error(`unexpected activity name ${activityType.name}`)
+      // Both are checked against their schemas, which also refuses an
+      // activity type outside `ActivityName`.
+      const route = await mapMyRideClient.getRoute(workout)
+      const activityType = await mapMyRideClient.getActivityType(workout)
 
       const gpxText = await mapMyRideClient.getRoutePathData(route, 'gpx')
       const gpxDoc = new DOMParser().parseFromString(gpxText, 'text/xml')
@@ -51,13 +45,13 @@ await mapAsync(
       const id = `workout-${workoutDate.toFormat('yyyy-LL-dd-HH-mm-ss')}`
       const filePath = `workouts/${id}.json`
 
-      const existingWorkout: CustomWorkout | undefined = (() => {
-        try {
-          return JSON.parse(readFileSync(filePath, 'utf8'))
-        } catch {
-          return undefined
-        }
-      })()
+      // Only `pathHasIssue` is read back, so a file from before a schema
+      // change still loads.
+      const existingWorkout = existsSync(filePath)
+        ? CustomWorkoutSchema.pick({ pathHasIssue: true }).parse(
+            JSON.parse(readFileSync(filePath, 'utf8'))
+          )
+        : undefined
 
       let pathError: Error | undefined
       if (
@@ -86,14 +80,16 @@ await mapAsync(
       totalNumPointsUnsimplified += numPointsUnsimplified
       totalNumPointsSimplified += numPointsSimplified
 
-      const newData: CustomWorkout = {
+      // Parsing drops the API fields the app has no use for (`_links` and
+      // the like), so only what `CustomWorkout` declares is written.
+      const newData = CustomWorkoutSchema.parse({
         title: `${workoutDate.toFormat('yyyy-LL-dd')} ${workout.name}`,
         pathHasIssue: Boolean(pathError),
         geoJson: geoJsonSimplified,
         workout,
         route,
         activityType,
-      }
+      } satisfies CustomWorkout)
 
       writeFileSync(filePath, JSON.stringify(newData, null, 2))
     } catch (error) {

@@ -82,7 +82,11 @@ export function useNdjsonStream<T>(
       .catch((err) => {
         if (err?.name !== 'AbortError') setError(err)
       })
-      .finally(() => setIsLoading(false))
+      .finally(() => {
+        // An aborted request has been replaced by the next `url`'s, or the
+        // hook has unmounted, so its settling says nothing about loading.
+        if (!ctrl.signal.aborted) setIsLoading(false)
+      })
 
     return () => ctrl.abort()
   }, [url, batchSize])
