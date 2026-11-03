@@ -3,27 +3,39 @@ import type { Position } from 'geojson'
 import { getMaxDistanceFeet, validatePointsDistance } from '../coordinates'
 
 /**
- * Points along one line of latitude, so a step's length is only its longitude.
+ * Roughly how far one `buildPoint` step spans.
  *
- * At this latitude 0.001° of longitude is roughly 280 ft — near enough that a
- * case can pick limits either side of a gap without pinning turf's arithmetic.
+ * Near enough that a case can pick limits either side of a gap without pinning
+ * turf's arithmetic.
  */
 const STEP_FEET = 280
-const at = (steps: number): Position => [-105 + steps * 0.001, 39.75]
+
+/**
+ * A point the given number of steps east along one line of latitude.
+ *
+ * Keeping the latitude fixed makes a gap's length only its longitude: at this
+ * latitude, 0.001° of it is about `STEP_FEET`.
+ */
+const buildPoint = (steps: number): Position => [-105 + steps * 0.001, 39.75]
 
 describe('getMaxDistanceFeet', () => {
   it('finds the widest gap, and the point that closes it', () => {
     // The 4th point is three steps out, so the gap into it is the widest.
-    const points = [at(0), at(1), at(2), at(5)]
+    const POINTS = [buildPoint(0), buildPoint(1), buildPoint(2), buildPoint(5)]
 
-    const { maxDistance, maxDistanceIndex } = getMaxDistanceFeet(points)
-
-    expect(maxDistanceIndex).toBe(3)
-    expect(maxDistance).toBeCloseTo(STEP_FEET * 3, -1)
+    expect(getMaxDistanceFeet(POINTS)).toMatchObject({
+      maxDistance: expect.closeTo(STEP_FEET * 3, -1),
+      maxDistanceIndex: 3,
+    })
   })
 
   it('refuses a route with nothing to measure between', () => {
-    for (const points of [[], [at(0)]]) {
+    for (const points of [
+      // No points at all.
+      [],
+      // One point, so no pair to measure.
+      [buildPoint(0)],
+    ]) {
       expect(
         () => getMaxDistanceFeet(points),
         `${points.length} point(s)`
@@ -33,11 +45,14 @@ describe('getMaxDistanceFeet', () => {
 })
 
 describe('validatePointsDistance', () => {
-  const LIMITS = { maxRouteDistanceFt: 1000, maxStartEndDistanceFt: 1000 }
+  const LIMITS = {
+    maxRouteDistanceFt: 1000,
+    maxStartEndDistanceFt: 1000,
+  } satisfies Parameters<typeof validatePointsDistance>[1]
 
   it('rejects a route that does not end back near where it started', () => {
     expect(() =>
-      validatePointsDistance([at(0), at(1), at(10)], {
+      validatePointsDistance([buildPoint(0), buildPoint(1), buildPoint(10)], {
         ...LIMITS,
         maxStartEndDistanceFt: 500,
       })
@@ -49,7 +64,7 @@ describe('validatePointsDistance', () => {
   it('rejects a jump between two points, naming which pair and how far', () => {
     expect(() =>
       // Out and back, so the start/end check passes and only the jump fails.
-      validatePointsDistance([at(0), at(10), at(0)], {
+      validatePointsDistance([buildPoint(0), buildPoint(10), buildPoint(0)], {
         ...LIMITS,
         maxRouteDistanceFt: 500,
       })
@@ -61,7 +76,7 @@ describe('validatePointsDistance', () => {
   it('checks the start and end before the gaps between points', () => {
     // Both limits are broken; the message says which check is worth fixing.
     expect(() =>
-      validatePointsDistance([at(0), at(10)], {
+      validatePointsDistance([buildPoint(0), buildPoint(10)], {
         maxRouteDistanceFt: 100,
         maxStartEndDistanceFt: 100,
       })

@@ -1,23 +1,18 @@
 import { renderHook, waitFor } from '@testing-library/react'
 
+import type { NdJsonMeta } from '@/types'
 import { useNdjsonStream } from '../useNdjsonStream'
 
-type Workout = { id: number }
-
-/** Serves the rows as an NDJSON body, the way the static file is fetched. */
-const serve = (rows: unknown[], { ok = true, status = 200 } = {}) => {
-  const stream = servePushable({ ok, status })
-  stream.push(rows)
-  stream.close()
-}
+/** A row of the streamed file; the hook takes any shape, so the test keeps it minimal. */
+type Row = { id: number }
 
 /**
- * The same, with the body left open until the test closes it.
+ * Stubs `fetch` with a body the test pushes rows into and closes.
  *
  * Lets a case observe the hook mid-stream, which is the state batching exists
  * for and which a body delivered in one chunk never stays in long enough to see.
  */
-const servePushable = ({ ok = true, status = 200 } = {}) => {
+const mockOpenFetch = ({ ok = true, status = 200 } = {}) => {
   let controller: ReadableStreamDefaultController<Uint8Array>
   const body = new ReadableStream<Uint8Array>({
     start(c) {
@@ -31,7 +26,7 @@ const servePushable = ({ ok = true, status = 200 } = {}) => {
   )
 
   return {
-    push: (rows: unknown[]) =>
+    push: (rows: (Row | NdJsonMeta)[]) =>
       controller.enqueue(
         new TextEncoder().encode(
           `${rows.map((r) => JSON.stringify(r)).join('\n')}\n`
@@ -41,7 +36,17 @@ const servePushable = ({ ok = true, status = 200 } = {}) => {
   }
 }
 
-const workouts = (count: number): Workout[] =>
+/** Stubs `fetch` to serve the rows as a complete NDJSON body, the way the static file is fetched. */
+const mockFetch = (
+  rows: (Row | NdJsonMeta)[],
+  { ok = true, status = 200 } = {}
+) => {
+  const stream = mockOpenFetch({ ok, status })
+  stream.push(rows)
+  stream.close()
+}
+
+const buildRows = (count: number): Row[] =>
   Array.from({ length: count }, (_, id) => ({ id }))
 
 describe('useNdjsonStream', () => {
@@ -50,42 +55,44 @@ describe('useNdjsonStream', () => {
   })
 
   it('collects every row, in the order the file lists them', async () => {
-    serve(workouts(5))
+    const ROWS = buildRows(5)
+    mockFetch(ROWS)
 
-    const { result } = renderHook(() => useNdjsonStream<Workout>('/w.ndjson'))
+    const { result } = renderHook(() => useNdjsonStream<Row>('/w.ndjson'))
 
     await waitFor(() => expect(result.current.isLoading).toBe(false))
-    expect(result.current.data).toEqual(workouts(5))
+    expect(result.current.data).toEqual(ROWS)
   })
 
   it("reads the total off the file's `_meta` row rather than counting", async () => {
+    const ROWS = buildRows(2)
     // The row is the file's own claim about its length, so the UI can show
     // progress before the rest of it has streamed in.
-    serve([{ _meta: { total: 900 } }, ...workouts(2)])
+    mockFetch([{ _meta: { total: 900 } }, ...ROWS])
 
-    const { result } = renderHook(() => useNdjsonStream<Workout>('/w.ndjson'))
+    const { result } = renderHook(() => useNdjsonStream<Row>('/w.ndjson'))
 
-    await waitFor(() => expect(result.current.total).toBe(900))
-    expect(result.current.data).toEqual(workouts(2))
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+    expect(result.current).toMatchObject({ total: 900, data: ROWS })
   })
 
   it('leaves the total unset when the file carries no meta row', async () => {
-    serve(workouts(3))
+    mockFetch(buildRows(3))
 
-    const { result } = renderHook(() => useNdjsonStream<Workout>('/w.ndjson'))
+    const { result } = renderHook(() => useNdjsonStream<Row>('/w.ndjson'))
 
     await waitFor(() => expect(result.current.isLoading).toBe(false))
     expect(result.current.total).toBeNull()
   })
 
   it('paints the first batch before the whole file has been read', async () => {
-    const stream = servePushable()
+    const stream = mockOpenFetch()
 
     const { result } = renderHook(() =>
-      useNdjsonStream<Workout>('/w.ndjson', { batchSize: 10 })
+      useNdjsonStream<Row>('/w.ndjson', { batchSize: 10 })
     )
 
-    stream.push(workouts(10))
+    stream.push(buildRows(10))
     await waitFor(() => expect(result.current.data).toHaveLength(10))
 
     // The point of batching: rows reach the map while loading is still true.
@@ -100,9 +107,9 @@ describe('useNdjsonStream', () => {
   })
 
   it('reports a failed request instead of an empty map', async () => {
-    serve([], { ok: false, status: 404 })
+    mockFetch([], { ok: false, status: 404 })
 
-    const { result } = renderHook(() => useNdjsonStream<Workout>('/w.ndjson'))
+    const { result } = renderHook(() => useNdjsonStream<Row>('/w.ndjson'))
 
     await waitFor(() => expect(result.current.isLoading).toBe(false))
     expect(result.current.error).toMatchObject({
@@ -111,15 +118,15 @@ describe('useNdjsonStream', () => {
   })
 
   it('starts over when the url changes', async () => {
-    serve(workouts(2))
+    mockFetch(buildRows(2))
 
     const { result, rerender } = renderHook(
-      ({ url }) => useNdjsonStream<Workout>(url),
+      ({ url }) => useNdjsonStream<Row>(url),
       { initialProps: { url: '/a.ndjson' } }
     )
     await waitFor(() => expect(result.current.data).toHaveLength(2))
 
-    serve(workouts(1))
+    mockFetch(buildRows(1))
     rerender({ url: '/b.ndjson' })
 
     // Not appended to what the first url gave: the second file replaces it.
