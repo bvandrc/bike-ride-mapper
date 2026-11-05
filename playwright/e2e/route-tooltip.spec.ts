@@ -21,6 +21,10 @@ test('hovering a route shows its tooltip until the pointer leaves', async ({
   await expect(tooltip).toContainText('Distance:')
 
   await leaveRoutes(page)
+  // Leaflet fades the bubble out after its content is gone: checked at once,
+  // since it has to stay hidden for the whole fade, not merely end hidden.
+  await expect(tooltip.filter({ hasText: 'Distance:' })).toHaveCount(0)
+  expect(await tooltip.filter({ visible: true }).count()).toBe(0)
   await expect(tooltip).toHaveCount(0)
 })
 

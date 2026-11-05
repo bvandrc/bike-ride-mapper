@@ -42,6 +42,11 @@ header {
 .leaflet-popup-tip {
   background-color: rgb(255 255 255 / 0.85);
 }
+/* react-leaflet unmounts a closed tooltip's content while Leaflet is still
+   fading the bubble out, which would leave an empty, unnamed tooltip showing. */
+.leaflet-tooltip:empty {
+  display: none;
+}
 .leaflet-control-layers {
   color: lightgray;
   background-color: rgb(0 0 0 / 0.4);
