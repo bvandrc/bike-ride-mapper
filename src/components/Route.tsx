@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { round } from 'es-toolkit'
 import {
   type GeoJSON as GeoJSONType,
+  type LatLng,
+  type LeafletMouseEvent,
   Symbol as LeafletSymbol,
   type PathOptions,
   type Polyline,
@@ -40,6 +42,7 @@ export const Route = ({
   const { isHovered, setHoveredRouteId } = useHoveredRoute(id)
   const lineRef = useRef<GeoJSONType>(null)
   const hoverLineRef = useRef<GeoJSONType>(null)
+  const [hoverLatLng, setHoverLatLng] = useState<LatLng | null>(null)
 
   const style = useMemo<PathOptions>(
     () =>
@@ -51,7 +54,10 @@ export const Route = ({
 
   const eventHandlers = useMemo(
     () => ({
-      mouseover: () => setHoveredRouteId(id),
+      mouseover: (event: LeafletMouseEvent) => {
+        setHoverLatLng(event.latlng)
+        setHoveredRouteId(id)
+      },
       mouseout: () => setHoveredRouteId(null),
     }),
     [setHoveredRouteId, id]
@@ -98,20 +104,28 @@ export const Route = ({
         style={HOVER_TARGET_STYLE}
         filter={isPathFeature}
         eventHandlers={eventHandlers}>
-        {/* Bound unconditionally: Leaflet opens a tooltip from the `mouseover`
-            it was already bound for, so mounting this on hover is too late. */}
-        <Tooltip
-          className="text-xs m-0 px-2 py-0"
-          direction="top"
-          sticky={true}>
-          <b>{date.toFormat('EEE. MMMM d, yyyy h:mma')}</b>
-          <br />
-          <i>
-            <b>Distance: {round(route.distance * METERS_TO_MILES, 1)}mi</b>
-          </i>
-          <br />
-          <i>Total Ascent: {round(route.total_ascent * METERS_TO_FEET, 0)}ft</i>
-        </Tooltip>
+        {/* Mounted only while hovered, and `permanent` so Leaflet's own
+            mouseover/mouseout handling stays out of it: that handling defers
+            an open from a hover mid-drag until `moveend`, then opens it
+            wherever the pointer has gone, leaving tooltips nothing closes. */}
+        {isHovered && hoverLatLng && (
+          <Tooltip
+            className="text-xs m-0 px-2 py-0"
+            direction="top"
+            permanent={true}
+            sticky={true}
+            position={hoverLatLng}>
+            <b>{date.toFormat('EEE. MMMM d, yyyy h:mma')}</b>
+            <br />
+            <i>
+              <b>Distance: {round(route.distance * METERS_TO_MILES, 1)}mi</b>
+            </i>
+            <br />
+            <i>
+              Total Ascent: {round(route.total_ascent * METERS_TO_FEET, 0)}ft
+            </i>
+          </Tooltip>
+        )}
       </GeoJSON>
     </>
   )
