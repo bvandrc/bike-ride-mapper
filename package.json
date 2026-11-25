@@ -58,9 +58,9 @@
     "leaflet-polylinedecorator": "^1",
     "luxon": "^3",
     "ndjson-readablestream": "^1",
-    "react": "^18",
-    "react-dom": "^18",
-    "react-leaflet": "^4",
+    "react": "^19",
+    "react-dom": "^19",
+    "react-leaflet": "^5",
     "ts-extras": "^2"
   },
   "devDependencies": {
@@ -76,8 +76,8 @@
     "@types/leaflet-polylinedecorator": "^1",
     "@types/luxon": "^3",
     "@types/node": "^24",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6",
     "@xmldom/xmldom": "^0.9",
     "axe-core": "^4",

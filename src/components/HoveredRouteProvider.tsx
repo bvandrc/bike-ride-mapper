@@ -51,11 +51,7 @@ export const HoveredRouteProvider = ({
     []
   )
 
-  return (
-    <HoveredRouteContext.Provider value={store}>
-      {children}
-    </HoveredRouteContext.Provider>
-  )
+  return <HoveredRouteContext value={store}>{children}</HoveredRouteContext>
 }
 
 const useHoveredRouteStore = () => {
